@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Kredensial SuperFood - Integrasi Aplikator Instan</title>
+  <meta name="description"
+    content="Formulir integrasi mandiri kredensial aplikator GoFood, Grab, dan Shopee untuk Mitra Outlet.">
+
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Dynamic Background Effects -->
+  <div class="blob-container">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Header Section -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Super<span>Food</span></h1>
+          <p>Portal Kredensial Aplikator</p>
+        </div>
+      </div>
+
+      <!-- Theme Toggler -->
+      <button class="theme-toggle" id="theme-toggle-btn" aria-label="Ganti Tema">
+        <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+          fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+          fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    <div class="form-wrapper">
+      <div class="glass-card">
+
+        <!-- Form Header -->
+        <div class="card-header">
+          <h2>Formulir Kredensial</h2>
+          <p>Lengkapi detail pemilik, outlet, dan kredensial akses aplikator Anda.</p>
+        </div>
+
+        <!-- Form Body -->
+        <form id="credential-form" novalidate>
+
+          <!-- Step 1: Owner and Outlet Data -->
+          <div class="form-section">
+            <div class="section-title">
+              <span class="step-num">1</span>
+              <h3>Identitas Outlet</h3>
+            </div>
+
+            <div class="form-grid">
+              <!-- Owner Name Input -->
+              <div class="input-group">
+                <input type="text" id="owner-name" name="ownerName" required placeholder=" ">
+                <label for="owner-name">Nama Lengkap Owner</label>
+                <span class="focus-bar"></span>
+                <span class="error-msg">Nama owner wajib diisi</span>
+                <div class="validation-icon">
+                  <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Outlet Name Input -->
+              <div class="input-group">
+                <input type="text" id="outlet-name" name="outletName" required placeholder=" ">
+                <label for="outlet-name">Nama Outlet / Cabang</label>
+                <span class="focus-bar"></span>
+                <span class="error-msg">Nama outlet wajib diisi</span>
+                <div class="validation-icon">
+                  <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Aplikator Selection -->
+          <div class="form-section">
+            <div class="section-title">
+              <span class="step-num">2</span>
+              <h3>Pilih Aplikator</h3>
+            </div>
+
+            <!-- Branded Selection Cards -->
+            <div class="aplikator-selector">
+
+              <!-- GoFood Card -->
+              <label class="aplikator-card gofood" for="aplikator-gofood">
+                <input type="radio" id="aplikator-gofood" name="aplikator" value="gofood" checked>
+                <span class="card-ui">
+                  <span class="brand-color-badge"></span>
+                  <span class="card-logo">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                      <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z" />
+                    </svg>
+                  </span>
+                  <span class="card-title">GoFood</span>
+                  <span class="card-desc">Hanya butuh Email</span>
+                </span>
+              </label>
+
+              <!-- Grab Card -->
+              <label class="aplikator-card grab" for="aplikator-grab">
+                <input type="radio" id="aplikator-grab" name="aplikator" value="grab">
+                <span class="card-ui">
+                  <span class="brand-color-badge"></span>
+                  <span class="card-logo">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                      <path
+                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
+                    </svg>
+                  </span>
+                  <span class="card-title">GrabFood</span>
+                  <span class="card-desc">Username & Sandi</span>
+                </span>
+              </label>
+
+              <!-- Shopee Card -->
+              <label class="aplikator-card shopee" for="aplikator-shopee">
+                <input type="radio" id="aplikator-shopee" name="aplikator" value="shopee">
+                <span class="card-ui">
+                  <span class="brand-color-badge"></span>
+                  <span class="card-logo">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                      <path
+                        d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z" />
+                    </svg>
+                  </span>
+                  <span class="card-title">ShopeeFood</span>
+                  <span class="card-desc">Nama Portal Partner</span>
+                </span>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Step 3: Adaptive Credentials Fields -->
+          <div class="form-section">
+            <div class="section-title">
+              <span class="step-num">3</span>
+              <h3>Kredensial Akses</h3>
+            </div>
+
+            <div class="credentials-container" id="credentials-container">
+              <!-- Content will be managed dynamically via JS, but we define the static fallback wrappers for fluid transitions -->
+
+              <!-- GoFood Fields (Active by Default) -->
+              <div class="credential-pane active" id="pane-gofood">
+                <div class="input-group">
+                  <input type="email" id="gofood-email" name="gofoodEmail" required placeholder=" ">
+                  <label for="gofood-email">Email Terdaftar GoFood</label>
+                  <span class="focus-bar"></span>
+                  <span class="error-msg">Email tidak valid</span>
+                  <div class="validation-icon">
+                    <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </div>
+                  <small class="field-hint">Gunakan email yang terhubung dengan akun GoBiz Outlet Anda.</small>
+                </div>
+              </div>
+
+              <!-- Grab Fields (Hidden by Default) -->
+              <div class="credential-pane" id="pane-grab">
+                <div class="form-grid">
+                  <!-- Grab Username -->
+                  <div class="input-group">
+                    <input type="text" id="grab-username" name="grabUsername" placeholder=" ">
+                    <label for="grab-username">Username</label>
+                    <span class="focus-bar"></span>
+                    <span class="error-msg">Username wajib diisi</span>
+                    <div class="validation-icon">
+                      <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Grab Password -->
+                  <div class="input-group password-group">
+                    <input type="password" id="grab-password" name="grabPassword" placeholder=" ">
+                    <label for="grab-password">Password</label>
+                    <span class="focus-bar"></span>
+                    <span class="error-msg">Password minimal 6 karakter</span>
+                    <button type="button" class="password-toggle" id="toggle-grab-password"
+                      aria-label="Tampilkan password">
+                      <!-- Hide Icon (Eye) -->
+                      <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                        stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      <!-- Show Icon (Eye Off) -->
+                      <svg class="eye-off-icon hidden" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor"
+                        stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                          d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                        </path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    </button>
+                    <div class="validation-icon">
+                      <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <small class="field-hint">Kredensial ini digunakan untuk sinkronisasi pesanan GrabMerchant Anda.</small>
+              </div>
+
+              <!-- Shopee Fields (Hidden by Default) -->
+              <div class="credential-pane" id="pane-shopee">
+                <div class="input-group">
+                  <input type="text" id="shopee-portal" name="shopeePortal" placeholder=" ">
+                  <label for="shopee-portal">Nama Portal Partner Shopee</label>
+                  <span class="focus-bar"></span>
+                  <span class="error-msg">Nama portal wajib diisi</span>
+                  <div class="validation-icon">
+                    <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </div>
+                  <small class="field-hint">Nama merchant/toko yang tertera pada aplikasi Shopee Partner Anda.</small>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-action">
+            <button type="submit" class="submit-btn" id="submit-btn">
+              <span class="btn-text">Simpan & Integrasikan</span>
+              <span class="btn-spinner hidden">
+                <svg class="spinner" viewBox="0 0 50 50">
+                  <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                </svg>
+              </span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Success State Overlay Modal -->
+  <div class="modal-overlay" id="success-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card glass-modal">
+
+      <!-- Success Icon Drawing -->
+      <div class="success-icon-wrapper">
+        <div class="success-checkmark">
+          <svg class="checkmark-svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Modal Info -->
+      <div class="modal-body">
+        <h3 id="modal-title">Kredensial Berhasil Didaftarkan!</h3>
+        <p class="modal-desc">Data Anda telah divalidasi dan dienkripsi dengan aman. Berikut adalah payload data
+          integrasi yang dihasilkan:</p>
+
+        <!-- Code / JSON Viewer -->
+        <div class="json-viewer-container">
+          <div class="json-header">
+            <span class="file-name">integration_payload.json</span>
+            <button class="copy-btn" id="copy-json-btn" aria-label="Salin JSON">
+              <span class="copy-text-default">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Salin
+              </span>
+              <span class="copy-text-success hidden">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Tersalin!
+              </span>
+            </button>
+          </div>
+          <pre class="json-code"><code id="json-output"></code></pre>
+        </div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="download-json-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Unduh JSON
+        </button>
+        <button type="button" class="btn btn-primary" id="close-modal-btn">
+          Isi Formulir Baru
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Javascript Logic -->
+  <script src="script.js"></script>
+</body>
+
+</html>
