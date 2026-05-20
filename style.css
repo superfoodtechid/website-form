@@ -632,8 +632,9 @@ body {
   user-select: none;
 }
 
-/* Hide Native Radio Buttons */
-.aplikator-card input[type="radio"] {
+/* Hide Native Radio & Checkbox Buttons */
+.aplikator-card input[type="radio"],
+.aplikator-card input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   width: 0;
@@ -770,6 +771,11 @@ body {
 .credential-pane.active {
   display: block;
   animation: enter-pane 0.4s forwards cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 24px;
+}
+
+.credential-pane.active:last-child {
+  margin-bottom: 0;
 }
 
 @keyframes enter-pane {
@@ -777,6 +783,117 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Brand-Specific Neon States */
+/* GoFood (Red) */
+#pane-gofood .input-group input {
+  border-color: rgba(224, 32, 32, 0.65);
+  box-shadow: 0 0 12px rgba(224, 32, 32, 0.15), inset 0 0 5px rgba(224, 32, 32, 0.05);
+}
+#pane-gofood .input-group label {
+  color: rgba(224, 32, 32, 0.85);
+}
+#pane-gofood .input-group input:focus {
+  border-color: HSL(var(--color-gofood));
+  box-shadow: 0 0 20px rgba(224, 32, 32, 0.45), inset 0 0 8px rgba(224, 32, 32, 0.2);
+}
+#pane-gofood .input-group input:focus~label,
+#pane-gofood .input-group input:not(:placeholder-shown)~label {
+  color: HSL(var(--color-gofood));
+}
+#pane-gofood .focus-bar {
+  background: HSL(var(--color-gofood));
+}
+
+/* Grab (Green) */
+#pane-grab .input-group input {
+  border-color: rgba(0, 177, 79, 0.65);
+  box-shadow: 0 0 12px rgba(0, 177, 79, 0.15), inset 0 0 5px rgba(0, 177, 79, 0.05);
+}
+#pane-grab .input-group label {
+  color: rgba(0, 177, 79, 0.85);
+}
+#pane-grab .input-group input:focus {
+  border-color: HSL(var(--color-grab));
+  box-shadow: 0 0 20px rgba(0, 177, 79, 0.45), inset 0 0 8px rgba(0, 177, 79, 0.2);
+}
+#pane-grab .input-group input:focus~label,
+#pane-grab .input-group input:not(:placeholder-shown)~label {
+  color: HSL(var(--color-grab));
+}
+#pane-grab .focus-bar {
+  background: HSL(var(--color-grab));
+}
+
+/* Shopee (Orange) */
+#pane-shopee .input-group input {
+  border-color: rgba(238, 77, 45, 0.65);
+  box-shadow: 0 0 12px rgba(238, 77, 45, 0.15), inset 0 0 5px rgba(238, 77, 45, 0.05);
+}
+#pane-shopee .input-group label {
+  color: rgba(238, 77, 45, 0.85);
+}
+#pane-shopee .input-group input:focus {
+  border-color: HSL(var(--color-shopee));
+  box-shadow: 0 0 20px rgba(238, 77, 45, 0.45), inset 0 0 8px rgba(238, 77, 45, 0.2);
+}
+#pane-shopee .input-group input:focus~label,
+#pane-shopee .input-group input:not(:placeholder-shown)~label {
+  color: HSL(var(--color-shopee));
+}
+#pane-shopee .focus-bar {
+  background: HSL(var(--color-shopee));
+}
+
+/* Pane Dividers Styling */
+.pane-divider {
+  display: flex;
+  align-items: center;
+  margin: 15px 0 25px 0;
+  text-align: center;
+}
+.pane-divider::before,
+.pane-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+  transition: border-color var(--transition-normal);
+}
+.pane-divider span {
+  padding: 0 16px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: var(--font-sans);
+}
+
+.gofood-divider span {
+  color: HSL(var(--color-gofood));
+  text-shadow: 0 0 8px rgba(224, 32, 32, 0.4);
+}
+.gofood-divider::before,
+.gofood-divider::after {
+  border-bottom-color: rgba(224, 32, 32, 0.35);
+}
+
+.grab-divider span {
+  color: HSL(var(--color-grab));
+  text-shadow: 0 0 8px rgba(0, 177, 79, 0.4);
+}
+.grab-divider::before,
+.grab-divider::after {
+  border-bottom-color: rgba(0, 177, 79, 0.35);
+}
+
+.shopee-divider span {
+  color: HSL(var(--color-shopee));
+  text-shadow: 0 0 8px rgba(238, 77, 45, 0.4);
+}
+.shopee-divider::before,
+.shopee-divider::after {
+  border-bottom-color: rgba(238, 77, 45, 0.35);
 }
 
 /* ==========================================================================

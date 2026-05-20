@@ -138,7 +138,7 @@
 
               <!-- GoFood Card -->
               <label class="aplikator-card gofood" for="aplikator-gofood">
-                <input type="radio" id="aplikator-gofood" name="aplikator" value="gofood" checked>
+                <input type="checkbox" id="aplikator-gofood" name="aplikator" value="gofood" checked>
                 <span class="card-ui">
                   <span class="brand-color-badge"></span>
                   <span class="card-logo">
@@ -154,7 +154,7 @@
 
               <!-- Grab Card -->
               <label class="aplikator-card grab" for="aplikator-grab">
-                <input type="radio" id="aplikator-grab" name="aplikator" value="grab">
+                <input type="checkbox" id="aplikator-grab" name="aplikator" value="grab">
                 <span class="card-ui">
                   <span class="brand-color-badge"></span>
                   <span class="card-logo">
@@ -170,7 +170,7 @@
 
               <!-- Shopee Card -->
               <label class="aplikator-card shopee" for="aplikator-shopee">
-                <input type="radio" id="aplikator-shopee" name="aplikator" value="shopee">
+                <input type="checkbox" id="aplikator-shopee" name="aplikator" value="shopee">
                 <span class="card-ui">
                   <span class="brand-color-badge"></span>
                   <span class="card-logo">
@@ -199,6 +199,9 @@
 
               <!-- GoFood Fields (Active by Default) -->
               <div class="credential-pane active" id="pane-gofood">
+                <div class="pane-divider gofood-divider">
+                  <span>GoFood</span>
+                </div>
                 <div class="input-group">
                   <input type="email" id="gofood-email" name="gofoodEmail" required placeholder=" ">
                   <label for="gofood-email">Email Terdaftar GoFood</label>
@@ -219,6 +222,9 @@
 
               <!-- Grab Fields (Hidden by Default) -->
               <div class="credential-pane" id="pane-grab">
+                <div class="pane-divider grab-divider">
+                  <span>GrabFood</span>
+                </div>
                 <div class="form-grid">
                   <!-- Grab Username -->
                   <div class="input-group">
@@ -276,6 +282,9 @@
 
               <!-- Shopee Fields (Hidden by Default) -->
               <div class="credential-pane" id="pane-shopee">
+                <div class="pane-divider shopee-divider">
+                  <span>ShopeeFood</span>
+                </div>
                 <div class="input-group">
                   <input type="text" id="shopee-portal" name="shopeePortal" placeholder=" ">
                   <label for="shopee-portal">Nama Portal Partner Shopee</label>

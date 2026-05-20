@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnSpinner = submitBtn.querySelector('.btn-spinner');
 
   // Aplikator inputs & panes
-  const aplikatorRadios = document.querySelectorAll('input[name="aplikator"]');
+  const aplikatorCheckboxes = document.querySelectorAll('input[name="aplikator"]');
   const credentialPanes = {
     gofood: document.getElementById('pane-gofood'),
     grab: document.getElementById('pane-grab'),
@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const ownerNameInput = document.getElementById('owner-name');
   const outletNameInput = document.getElementById('outlet-name');
 
-  let currentAplikator = 'gofood';
   let submittedData = null; // Storing submitted payload for export
 
   // URL Google Apps Script Web App (Tempel URL Anda di sini setelah men-deploy Apps Script)
@@ -73,49 +72,50 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==========================================================================
      DYNAMIC APILIKATOR CONTROLLER
      ========================================================================== */
-  aplikatorRadios.forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        switchAplikatorPane(e.target.value);
-      }
+  aplikatorCheckboxes.forEach(checkbox => {
+    // Inisialisasi awal berdasarkan state checkbox di HTML
+    toggleAplikatorPane(checkbox.value, checkbox.checked, true);
+
+    checkbox.addEventListener('change', (e) => {
+      toggleAplikatorPane(e.target.value, e.target.checked, false);
     });
   });
 
-  function switchAplikatorPane(selectedAplikator) {
-    currentAplikator = selectedAplikator;
+  function toggleAplikatorPane(aplikator, isChecked, isInit = false) {
+    const pane = credentialPanes[aplikator];
+    if (!pane) return;
 
-    // Smooth Transition: Fade out and hide all panes, deactivate requirements
-    Object.keys(credentialPanes).forEach(key => {
-      const pane = credentialPanes[key];
+    if (isChecked) {
+      pane.classList.add('active');
+      // Aktifkan required attribute untuk field input dari pane ini
+      credentialInputs[aplikator].forEach(input => {
+        input.setAttribute('required', 'true');
+      });
+      if (!isInit) {
+        showToast(
+          'Aplikator Ditambahkan',
+          `Input kredensial ${capitalizeWord(aplikator)} ditampilkan.`,
+          'info'
+        );
+      }
+    } else {
       pane.classList.remove('active');
-
-      // Deactivate all requirements in non-active panes
-      credentialInputs[key].forEach(input => {
+      // Matikan required attribute dan bersihkan styling validasi
+      credentialInputs[aplikator].forEach(input => {
         input.removeAttribute('required');
-        // Clear validation statuses
         const group = input.closest('.input-group');
         if (group) {
           group.classList.remove('is-valid', 'is-invalid');
         }
       });
-    });
-
-    // Fade in and show selected pane, activate requirements
-    const targetPane = credentialPanes[selectedAplikator];
-    setTimeout(() => {
-      targetPane.classList.add('active');
-
-      // Set requirements dynamically based on selected aplikator
-      credentialInputs[selectedAplikator].forEach(input => {
-        input.setAttribute('required', 'true');
-      });
-    }, 50);
-
-    showToast(
-      'Aplikator Diubah',
-      `Form disesuaikan untuk kebutuhan ${capitalizeWord(selectedAplikator)}.`,
-      'info'
-    );
+      if (!isInit) {
+        showToast(
+          'Aplikator Dihapus',
+          `Input kredensial ${capitalizeWord(aplikator)} disembunyikan.`,
+          'info'
+        );
+      }
+    }
   }
 
   // Capitalize helpers
@@ -233,9 +233,15 @@ document.addEventListener('DOMContentLoaded', () => {
   credentialForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
+    // Dapatkan semua aplikator yang dipilih
+    const selectedAplikators = Array.from(aplikatorCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    if (selectedAplikators.length === 0) {
+      showToast('Form Tidak Lengkap', 'Pilih minimal satu aplikator (GoFood / GrabFood / ShopeeFood).', 'error');
+      return;
+    }
+
     // Trigger validation for all active inputs
     let formIsValid = true;
-    let firstInvalidElement = null;
 
     // Static fields
     const staticValidations = [validateField(ownerNameInput), validateField(outletNameInput)];
@@ -244,10 +250,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Active credential fields
-    credentialInputs[currentAplikator].forEach(input => {
-      if (!validateField(input)) {
-        formIsValid = false;
-      }
+    selectedAplikators.forEach(aplikator => {
+      credentialInputs[aplikator].forEach(input => {
+        if (!validateField(input)) {
+          formIsValid = false;
+        }
+      });
     });
 
     if (!formIsValid) {
@@ -264,44 +272,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Process Valid Submission
-    executeSubmission();
+    executeSubmission(selectedAplikators);
   });
 
-  function executeSubmission() {
+  function executeSubmission(selectedAplikators) {
     // Trigger loading state
     submitBtn.disabled = true;
     btnText.style.opacity = '0';
     btnSpinner.classList.remove('hidden');
 
-    // Assemble dynamic credentials object based on Aplikator
     let credentialsPayload = {};
-    let sheetsPayload = {
-      owner: ownerNameInput.value.trim(),
-      outlet: outletNameInput.value.trim(),
-      aplikator: currentAplikator === 'gofood' ? 'GoFood' : (currentAplikator === 'grab' ? 'GrabFood' : 'ShopeeFood')
-    };
+    let sheetsPayloads = [];
 
-    if (currentAplikator === 'gofood') {
-      const emailVal = document.getElementById('gofood-email').value.trim();
-      credentialsPayload = { email: emailVal };
-      sheetsPayload.email = emailVal;
-    } else if (currentAplikator === 'grab') {
-      const userVal = document.getElementById('grab-username').value.trim();
-      const passVal = document.getElementById('grab-password').value.trim();
-      credentialsPayload = { username: userVal, password: passVal };
-      sheetsPayload.username = userVal;
-      sheetsPayload.password = passVal;
-    } else if (currentAplikator === 'shopee') {
-      const portalVal = document.getElementById('shopee-portal').value.trim();
-      credentialsPayload = { namaPortal: portalVal };
-      sheetsPayload.merchantName = portalVal;
-    }
+    selectedAplikators.forEach(aplikator => {
+      let appName = aplikator === 'gofood' ? 'GoFood' : (aplikator === 'grab' ? 'GrabFood' : 'ShopeeFood');
+      let appPayload = {
+        owner: ownerNameInput.value.trim(),
+        outlet: outletNameInput.value.trim(),
+        aplikator: appName
+      };
 
-    // Compile entire payload for UI display
+      if (aplikator === 'gofood') {
+        const emailVal = document.getElementById('gofood-email').value.trim();
+        credentialsPayload.gofood = { email: emailVal };
+        appPayload.email = emailVal;
+      } else if (aplikator === 'grab') {
+        const userVal = document.getElementById('grab-username').value.trim();
+        const passVal = document.getElementById('grab-password').value.trim();
+        credentialsPayload.grab = { username: userVal, password: passVal };
+        appPayload.username = userVal;
+        appPayload.password = passVal;
+      } else if (aplikator === 'shopee') {
+        const portalVal = document.getElementById('shopee-portal').value.trim();
+        credentialsPayload.shopee = { namaPortal: portalVal };
+        appPayload.merchantName = portalVal;
+      }
+
+      sheetsPayloads.push(appPayload);
+    });
+
+    // Compile entire payload for UI display (JSON Output)
     submittedData = {
       namaOwner: ownerNameInput.value.trim(),
       namaOutlet: outletNameInput.value.trim(),
-      aplikator: capitalizeWord(currentAplikator),
+      aplikator: selectedAplikators.map(val => capitalizeWord(val)),
       kredensial: credentialsPayload,
       metadata: {
         waktuIntegrasi: new Date().toISOString(),
@@ -312,22 +326,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Jika URL Apps Script aktif dan fitur diaktifkan, kirim data ke Google Sheets
     if (ENABLE_SHEET_SUBMISSION && WEB_APP_URL && WEB_APP_URL !== "YOUR_DEPLOYED_WEB_APP_URL") {
-      fetch(WEB_APP_URL, {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
-        body: JSON.stringify(sheetsPayload)
-      })
-        .then(response => response.json())
-        .then(resData => {
-          if (resData.status === "success") {
-            showToast('Sinkronisasi Sukses', 'Kredensial berhasil disimpan di Google Sheets!', 'success');
+      const fetchPromises = sheetsPayloads.map(payload => {
+        return fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        })
+        .then(response => response.json());
+      });
+
+      Promise.all(fetchPromises)
+        .then(results => {
+          const failed = results.filter(resData => resData.status !== "success");
+          if (failed.length === 0) {
+            showToast('Sinkronisasi Sukses', 'Semua kredensial berhasil disimpan di Google Sheets!', 'success');
             finalizeSubmission('success');
           } else {
-            showToast('Sinkronisasi Gagal', resData.message || 'Gagal menyimpan ke Google Sheets.', 'error');
-            finalizeSubmission('error', resData.message);
+            const errMsgs = failed.map(f => f.message).join(', ');
+            showToast('Sinkronisasi Gagal', 'Beberapa data gagal disimpan ke Google Sheets.', 'error');
+            finalizeSubmission('error', errMsgs);
           }
         })
         .catch(error => {
@@ -435,7 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Formulate a beautiful safe name
     const outletSlug = submittedData.namaOutlet.toLowerCase().replace(/[^a-z0-9]/g, '_');
-    const filename = `kredensial_${outletSlug}_${currentAplikator}.json`;
+    const activeApps = Array.from(aplikatorCheckboxes).filter(cb => cb.checked).map(cb => cb.value).join('_');
+    const filename = `kredensial_${outletSlug}_${activeApps || 'multi'}.json`;
 
     downloadAnchor.setAttribute("href", dataStr);
     downloadAnchor.setAttribute("download", filename);
