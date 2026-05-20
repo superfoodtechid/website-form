@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // URL Google Apps Script Web App (Tempel URL Anda di sini setelah men-deploy Apps Script)
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1GeEBNpiwNymIghNksgLu_XyVROUCqPxwC2q5HxGQEGDBrNcpZdhyZtyQZSKBc9xDTw/exec";
+  // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
+  const ENABLE_SHEET_SUBMISSION = false;
 
   /* ==========================================================================
      THEME STORAGE & TOGGLE SYSTEM
@@ -215,11 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getRequiredErrorMessage(id) {
     switch (id) {
-      case 'owner-name': return 'Nama lengkap pemilik wajib diisi';
-      case 'outlet-name': return 'Nama outlet/cabang wajib diisi';
+      case 'owner-name': return 'Nama pemilik wajib diisi';
+      case 'outlet-name': return 'Nama outlet wajib diisi';
       case 'gofood-email': return 'Email mitra GoFood wajib diisi';
-      case 'grab-username': return 'Username Grab merchant wajib diisi';
-      case 'grab-password': return 'Password Grab merchant wajib diisi';
+      case 'grab-username': return 'Username Grab wajib diisi';
+      case 'grab-password': return 'Password Grab wajib diisi';
       case 'shopee-portal': return 'Nama portal partner Shopee wajib diisi';
       default: return 'Field ini wajib diisi';
     }
@@ -308,8 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    // Jika URL Apps Script telah dikonfigurasi, kirim data secara langsung ke Google Sheets
-    if (WEB_APP_URL && WEB_APP_URL !== "YOUR_DEPLOYED_WEB_APP_URL") {
+    // Jika URL Apps Script aktif dan fitur diaktifkan, kirim data ke Google Sheets
+    if (ENABLE_SHEET_SUBMISSION && WEB_APP_URL && WEB_APP_URL !== "YOUR_DEPLOYED_WEB_APP_URL") {
       fetch(WEB_APP_URL, {
         method: "POST",
         mode: "cors",
@@ -396,16 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closeSuccessModal() {
     successModal.classList.remove('open');
-    credentialForm.reset();
-
-    // Clear validation styling classes from all fields
-    document.querySelectorAll('.input-group').forEach(group => {
-      group.classList.remove('is-valid', 'is-invalid');
-    });
-
-    // Reset back to first aplikator pane (GoFood)
-    switchAplikatorPane('gofood');
-    document.getElementById('aplikator-gofood').checked = true;
+    // Form tidak di-reset agar semua inputan user tidak hilang setelah submit
   }
 
   // Copy JSON Payload to Clipboard
