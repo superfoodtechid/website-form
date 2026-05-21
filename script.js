@@ -17,15 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     grab: document.getElementById('pane-grab'),
     shopee: document.getElementById('pane-shopee')
   };
-  const credentialInputs = {
-    gofood: [document.getElementById('gofood-email')],
-    grab: [document.getElementById('grab-username'), document.getElementById('grab-password')],
-    shopee: [document.getElementById('shopee-portal')]
-  };
-
-  // Password toggle
-  const toggleGrabPasswordBtn = document.getElementById('toggle-grab-password');
-  const grabPasswordInput = document.getElementById('grab-password');
 
   // Success Modal Elements
   const successModal = document.getElementById('success-modal');
@@ -85,10 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const pane = credentialPanes[aplikator];
     if (!pane) return;
 
+    const inputs = pane.querySelectorAll('input');
+
     if (isChecked) {
       pane.classList.add('active');
       // Aktifkan required attribute untuk field input dari pane ini
-      credentialInputs[aplikator].forEach(input => {
+      inputs.forEach(input => {
         input.setAttribute('required', 'true');
       });
       if (!isInit) {
@@ -101,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       pane.classList.remove('active');
       // Matikan required attribute dan bersihkan styling validasi
-      credentialInputs[aplikator].forEach(input => {
+      inputs.forEach(input => {
         input.removeAttribute('required');
         const group = input.closest('.input-group');
         if (group) {
@@ -129,40 +122,226 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==========================================================================
      PASSWORD VISIBILITY TOGGLER
      ========================================================================== */
-  toggleGrabPasswordBtn.addEventListener('click', () => {
-    const isPassword = grabPasswordInput.getAttribute('type') === 'password';
-    grabPasswordInput.setAttribute('type', isPassword ? 'text' : 'password');
+  // Password visibility toggler (using event delegation)
+  document.addEventListener('click', (e) => {
+    const toggleBtn = e.target.closest('.password-toggle');
+    if (!toggleBtn) return;
 
-    const eyeIcon = toggleGrabPasswordBtn.querySelector('.eye-icon');
-    const eyeOffIcon = toggleGrabPasswordBtn.querySelector('.eye-off-icon');
+    const passwordInput = toggleBtn.closest('.password-group').querySelector('input');
+    if (!passwordInput) return;
+
+    const isPassword = passwordInput.getAttribute('type') === 'password';
+    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+
+    const eyeIcon = toggleBtn.querySelector('.eye-icon');
+    const eyeOffIcon = toggleBtn.querySelector('.eye-off-icon');
 
     if (isPassword) {
       eyeIcon.classList.add('hidden');
       eyeOffIcon.classList.remove('hidden');
-      toggleGrabPasswordBtn.setAttribute('aria-label', 'Sembunyikan password');
+      toggleBtn.setAttribute('aria-label', 'Sembunyikan password');
     } else {
       eyeIcon.classList.remove('hidden');
       eyeOffIcon.classList.add('hidden');
-      toggleGrabPasswordBtn.setAttribute('aria-label', 'Tampilkan password');
+      toggleBtn.setAttribute('aria-label', 'Tampilkan password');
     }
   });
+
+  /* ==========================================================================
+     DYNAMIC CREDENTIAL ROWS CONTROLLER
+     ========================================================================== */
+  const addRowButtons = document.querySelectorAll('.add-row-btn');
+  addRowButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-target');
+      addCredentialRow(target);
+    });
+  });
+
+  // Handle Remove Row buttons (using event delegation)
+  document.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.remove-row-btn');
+    if (!removeBtn) return;
+
+    const rowWrapper = removeBtn.closest('.credential-row-wrapper');
+    if (!rowWrapper) return;
+
+    // Add exit animation class
+    rowWrapper.classList.remove('animate-row-enter');
+    rowWrapper.classList.add('animate-row-exit');
+
+    // Remove from DOM after animation completes
+    rowWrapper.addEventListener('animationend', () => {
+      rowWrapper.remove();
+      showToast('Akun Dihapus', 'Field kredensial tambahan telah dihapus.', 'info');
+    });
+  });
+
+  function addCredentialRow(target) {
+    const container = document.getElementById(`${target}-rows-container`);
+    if (!container) return;
+
+    const rowWrapper = document.createElement('div');
+    rowWrapper.className = 'credential-row-wrapper animate-row-enter';
+
+    const uniqueIdSuffix = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    let contentHtml = '';
+    if (target === 'gofood') {
+      const emailId = `gofood-email-${uniqueIdSuffix}`;
+      contentHtml = `
+        <div class="credential-row-content">
+          <div class="input-group">
+            <input type="email" id="${emailId}" class="gofood-email-input" name="gofoodEmail" required placeholder=" ">
+            <label for="${emailId}">Email Terdaftar GoFood</label>
+            <span class="focus-bar"></span>
+            <span class="error-msg">Email tidak valid</span>
+            <div class="validation-icon">
+              <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="remove-row-btn" aria-label="Hapus akun">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </button>
+      `;
+    } else if (target === 'grab') {
+      const usernameId = `grab-username-${uniqueIdSuffix}`;
+      const passwordId = `grab-password-${uniqueIdSuffix}`;
+      contentHtml = `
+        <div class="credential-row-content">
+          <div class="form-grid">
+            <div class="input-group">
+              <input type="text" id="${usernameId}" class="grab-username-input" name="grabUsername" required placeholder=" ">
+              <label for="${usernameId}">Username</label>
+              <span class="focus-bar"></span>
+              <span class="error-msg">Username wajib diisi</span>
+              <div class="validation-icon">
+                <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="input-group password-group">
+              <input type="password" id="${passwordId}" class="grab-password-input" name="grabPassword" required placeholder=" ">
+              <label for="${passwordId}">Password</label>
+              <span class="focus-bar"></span>
+              <span class="error-msg">Password minimal 6 karakter</span>
+              <button type="button" class="password-toggle" aria-label="Tampilkan password">
+                <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-off-icon hidden" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+              <div class="validation-icon">
+                <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="remove-row-btn" aria-label="Hapus akun">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </button>
+      `;
+    } else if (target === 'shopee') {
+      const portalId = `shopee-portal-${uniqueIdSuffix}`;
+      contentHtml = `
+        <div class="credential-row-content">
+          <div class="input-group">
+            <input type="text" id="${portalId}" class="shopee-portal-input" name="shopeePortal" required placeholder=" ">
+            <label for="${portalId}">Nama Portal Partner Shopee</label>
+            <span class="focus-bar"></span>
+            <span class="error-msg">Nama portal wajib diisi</span>
+            <div class="validation-icon">
+              <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="remove-row-btn" aria-label="Hapus akun">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </button>
+      `;
+    }
+
+    rowWrapper.innerHTML = contentHtml;
+    container.appendChild(rowWrapper);
+    
+    // Auto-required if pane is active
+    const activeInputs = rowWrapper.querySelectorAll('input');
+    const pane = container.closest('.credential-pane');
+    if (pane && pane.classList.contains('active')) {
+      activeInputs.forEach(inp => inp.setAttribute('required', 'true'));
+    }
+
+    // Focus first input
+    const firstInput = rowWrapper.querySelector('input');
+    if (firstInput) {
+      firstInput.focus();
+    }
+
+    showToast(
+      'Akun Ditambahkan',
+      `Field tambahan untuk ${capitalizeWord(target)} berhasil dibuat.`,
+      'info'
+    );
+  }
 
   /* ==========================================================================
      FORM VALIDATION ENGINE
      ========================================================================== */
 
-  // Real-time listener for inputs
-  const allInputs = [ownerNameInput, outletNameInput, ...credentialInputs.gofood, ...credentialInputs.grab, ...credentialInputs.shopee];
+  // Real-time listener for inputs using event delegation
+  credentialForm.addEventListener('input', (e) => {
+    if (e.target.tagName === 'INPUT') {
+      validateField(e.target);
+    }
+  });
 
-  allInputs.forEach(input => {
-    // Perform validation on inputs
-    input.addEventListener('input', () => {
-      validateField(input);
-    });
-
-    input.addEventListener('blur', () => {
-      validateField(input);
-    });
+  credentialForm.addEventListener('focusout', (e) => {
+    if (e.target.tagName === 'INPUT') {
+      validateField(e.target);
+    }
   });
 
   function validateField(input) {
@@ -182,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Required check
     if (input.hasAttribute('required') && value === '') {
       isValid = false;
-      errorMessage = getRequiredErrorMessage(input.id);
+      errorMessage = getRequiredErrorMessage(input);
     } else if (value !== '') {
       // Format validations
       if (input.type === 'email') {
@@ -191,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
           isValid = false;
           errorMessage = 'Format email tidak valid';
         }
-      } else if (input.id === 'grab-password') {
+      } else if (input.classList.contains('grab-password-input')) {
         if (value.length < 6) {
           isValid = false;
           errorMessage = 'Sandi minimal 6 karakter';
@@ -215,16 +394,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return isValid;
   }
 
-  function getRequiredErrorMessage(id) {
-    switch (id) {
-      case 'owner-name': return 'Nama pemilik wajib diisi';
-      case 'outlet-name': return 'Nama outlet wajib diisi';
-      case 'gofood-email': return 'Email mitra GoFood wajib diisi';
-      case 'grab-username': return 'Username Grab wajib diisi';
-      case 'grab-password': return 'Password Grab wajib diisi';
-      case 'shopee-portal': return 'Nama portal partner Shopee wajib diisi';
-      default: return 'Field ini wajib diisi';
-    }
+  function getRequiredErrorMessage(input) {
+    const id = input.id;
+    if (id === 'owner-name') return 'Nama pemilik wajib diisi';
+    if (id === 'outlet-name') return 'Nama outlet wajib diisi';
+    
+    if (input.classList.contains('gofood-email-input')) return 'Email mitra GoFood wajib diisi';
+    if (input.classList.contains('grab-username-input')) return 'Username Grab wajib diisi';
+    if (input.classList.contains('grab-password-input')) return 'Password Grab wajib diisi';
+    if (input.classList.contains('shopee-portal-input')) return 'Nama portal partner Shopee wajib diisi';
+    
+    return 'Field ini wajib diisi';
   }
 
   /* ==========================================================================
@@ -251,7 +431,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Active credential fields
     selectedAplikators.forEach(aplikator => {
-      credentialInputs[aplikator].forEach(input => {
+      let selector = '';
+      if (aplikator === 'gofood') selector = '.gofood-email-input';
+      else if (aplikator === 'grab') selector = '.grab-username-input, .grab-password-input';
+      else if (aplikator === 'shopee') selector = '.shopee-portal-input';
+
+      const inputs = document.querySelectorAll(`#pane-${aplikator} ${selector}`);
+      inputs.forEach(input => {
         if (!validateField(input)) {
           formIsValid = false;
         }
@@ -285,30 +471,51 @@ document.addEventListener('DOMContentLoaded', () => {
     let sheetsPayloads = [];
 
     selectedAplikators.forEach(aplikator => {
-      let appName = aplikator === 'gofood' ? 'GoFood' : (aplikator === 'grab' ? 'GrabFood' : 'ShopeeFood');
-      let appPayload = {
-        owner: ownerNameInput.value.trim(),
-        outlet: outletNameInput.value.trim(),
-        aplikator: appName
-      };
-
       if (aplikator === 'gofood') {
-        const emailVal = document.getElementById('gofood-email').value.trim();
-        credentialsPayload.gofood = { email: emailVal };
-        appPayload.email = emailVal;
+        const emailInputs = document.querySelectorAll('#pane-gofood .gofood-email-input');
+        credentialsPayload.gofood = [];
+        emailInputs.forEach(input => {
+          const emailVal = input.value.trim();
+          credentialsPayload.gofood.push({ email: emailVal });
+          
+          sheetsPayloads.push({
+            owner: ownerNameInput.value.trim(),
+            outlet: outletNameInput.value.trim(),
+            aplikator: 'GoFood',
+            email: emailVal
+          });
+        });
       } else if (aplikator === 'grab') {
-        const userVal = document.getElementById('grab-username').value.trim();
-        const passVal = document.getElementById('grab-password').value.trim();
-        credentialsPayload.grab = { username: userVal, password: passVal };
-        appPayload.username = userVal;
-        appPayload.password = passVal;
+        const rows = document.querySelectorAll('#pane-grab .credential-row-wrapper');
+        credentialsPayload.grab = [];
+        rows.forEach(row => {
+          const userVal = row.querySelector('.grab-username-input').value.trim();
+          const passVal = row.querySelector('.grab-password-input').value.trim();
+          credentialsPayload.grab.push({ username: userVal, password: passVal });
+          
+          sheetsPayloads.push({
+            owner: ownerNameInput.value.trim(),
+            outlet: outletNameInput.value.trim(),
+            aplikator: 'GrabFood',
+            username: userVal,
+            password: passVal
+          });
+        });
       } else if (aplikator === 'shopee') {
-        const portalVal = document.getElementById('shopee-portal').value.trim();
-        credentialsPayload.shopee = { namaPortal: portalVal };
-        appPayload.merchantName = portalVal;
+        const portalInputs = document.querySelectorAll('#pane-shopee .shopee-portal-input');
+        credentialsPayload.shopee = [];
+        portalInputs.forEach(input => {
+          const portalVal = input.value.trim();
+          credentialsPayload.shopee.push({ namaPortal: portalVal });
+          
+          sheetsPayloads.push({
+            owner: ownerNameInput.value.trim(),
+            outlet: outletNameInput.value.trim(),
+            aplikator: 'ShopeeFood',
+            merchantName: portalVal
+          });
+        });
       }
-
-      sheetsPayloads.push(appPayload);
     });
 
     // Compile entire payload for UI display (JSON Output)

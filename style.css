@@ -1481,3 +1481,159 @@ body {
     padding: 12px;
   }
 }
+
+/* ==========================================================================
+   DYNAMIC CREDENTIAL ROWS & BUTTONS
+   ========================================================================== */
+
+.pane-rows-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.credential-row-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.credential-row-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Remove/Delete Row Button */
+.remove-row-btn {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: HSL(var(--color-invalid));
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .remove-row-btn {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+.remove-row-btn:hover {
+  background: HSL(var(--color-invalid));
+  color: white;
+  border-color: HSL(var(--color-invalid));
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+.remove-row-btn:active {
+  transform: translateY(0);
+}
+
+/* Add Row Button Container and Button */
+.add-row-container {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.add-row-btn {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+}
+
+[data-theme="light"] .add-row-btn {
+  border-color: rgba(15, 23, 42, 0.15);
+  background: rgba(15, 23, 42, 0.02);
+}
+
+.add-row-btn svg {
+  transition: transform var(--transition-fast);
+}
+
+.add-row-btn:hover {
+  border-style: solid;
+  transform: translateY(-1px);
+}
+
+.add-row-btn:active {
+  transform: translateY(0);
+}
+
+/* Brand specific styling for Add buttons */
+.add-row-btn.gofood-btn:hover {
+  border-color: HSL(var(--color-gofood));
+  color: HSL(var(--color-gofood));
+  background: rgba(224, 32, 32, 0.05);
+}
+
+.add-row-btn.grab-btn:hover {
+  border-color: HSL(var(--color-grab));
+  color: HSL(var(--color-grab));
+  background: rgba(0, 177, 79, 0.05);
+}
+
+.add-row-btn.shopee-btn:hover {
+  border-color: HSL(var(--color-shopee));
+  color: HSL(var(--color-shopee));
+  background: rgba(238, 77, 45, 0.05);
+}
+
+.add-row-btn:hover svg {
+  transform: scale(1.1) rotate(90deg);
+}
+
+/* Animations for adding/removing rows */
+.animate-row-enter {
+  animation: slide-row-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-row-exit {
+  animation: slide-row-out 0.25s ease-in forwards;
+}
+
+@keyframes slide-row-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slide-row-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 100px;
+    margin-bottom: 16px;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
