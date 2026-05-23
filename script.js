@@ -80,10 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isChecked) {
       pane.classList.add('active');
-      // Aktifkan required attribute untuk field input dari pane ini
-      inputs.forEach(input => {
-        input.setAttribute('required', 'true');
-      });
       if (!isInit) {
         showToast(
           'Aplikator Ditambahkan',
@@ -307,12 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
     rowWrapper.innerHTML = contentHtml;
     container.appendChild(rowWrapper);
 
-    // Auto-required if pane is active
-    const activeInputs = rowWrapper.querySelectorAll('input');
-    const pane = container.closest('.credential-pane');
-    if (pane && pane.classList.contains('active')) {
-      activeInputs.forEach(inp => inp.setAttribute('required', 'true'));
-    }
+
 
     // Focus first input
     const firstInput = rowWrapper.querySelector('input');
@@ -420,44 +411,24 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Trigger validation for all active inputs
-    let formIsValid = true;
+    // Trigger visual validation (tidak memblokir submit)
+    validateField(ownerNameInput);
+    validateField(outletNameInput);
 
-    // Static fields
-    const staticValidations = [validateField(ownerNameInput), validateField(outletNameInput)];
-    if (staticValidations.includes(false)) {
-      formIsValid = false;
-    }
-
-    // Active credential fields
     selectedAplikators.forEach(aplikator => {
       let selector = '';
       if (aplikator === 'gofood') selector = '.gofood-email-input';
       else if (aplikator === 'grab') selector = '.grab-username-input, .grab-password-input';
       else if (aplikator === 'shopee') selector = '.shopee-portal-input';
 
-      const inputs = document.querySelectorAll(`#pane-${aplikator} ${selector}`);
-      inputs.forEach(input => {
-        if (!validateField(input)) {
-          formIsValid = false;
-        }
-      });
+      if (selector) {
+        document.querySelectorAll(`#pane-${aplikator} ${selector}`).forEach(input => {
+          validateField(input);
+        });
+      }
     });
 
-    if (!formIsValid) {
-      // Find first invalid input for autofocus & shake highlight
-      const invalidGroup = credentialForm.querySelector('.input-group.is-invalid');
-      if (invalidGroup) {
-        const input = invalidGroup.querySelector('input');
-        if (input) {
-          input.focus();
-        }
-      }
-      showToast('Form Tidak Lengkap', 'Silakan lengkapi atau perbaiki kolom yang salah.', 'error');
-      return;
-    }
-
-    // Process Valid Submission
+    // Langsung proses submit meskipun ada field kosong
     executeSubmission(selectedAplikators);
   });
 
