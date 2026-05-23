@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // URL Google Apps Script Web App (Tempel URL Anda di sini setelah men-deploy Apps Script)
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1GeEBNpiwNymIghNksgLu_XyVROUCqPxwC2q5HxGQEGDBrNcpZdhyZtyQZSKBc9xDTw/exec";
   // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
-  const ENABLE_SHEET_SUBMISSION = false;
+  const ENABLE_SHEET_SUBMISSION = true;
 
   /* ==========================================================================
      THEME STORAGE & TOGGLE SYSTEM
