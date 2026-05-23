@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="credential-row-content">
           <div class="input-group">
             <input type="email" id="${emailId}" class="gofood-email-input" name="gofoodEmail" required placeholder=" ">
-            <label for="${emailId}">Email Terdaftar GoFood</label>
+            <label for="${emailId}">Email Custom Manager</label>
             <span class="focus-bar"></span>
             <span class="error-msg">Email tidak valid</span>
             <div class="validation-icon">
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="credential-row-content">
           <div class="input-group">
             <input type="text" id="${portalId}" class="shopee-portal-input" name="shopeePortal" required placeholder=" ">
-            <label for="${portalId}">Nama Portal Partner Shopee</label>
+            <label for="${portalId}">Nama Portal</label>
             <span class="focus-bar"></span>
             <span class="error-msg">Nama portal wajib diisi</span>
             <div class="validation-icon">
@@ -349,12 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isValid = true;
     let errorMessage = '';
 
-    // Required check
-    if (input.hasAttribute('required') && value === '') {
-      isValid = false;
-      errorMessage = getRequiredErrorMessage(input);
-    } else if (value !== '') {
-      // Format validations
+    // Validasi format (hanya jika field diisi)
+    if (value !== '') {
       if (input.type === 'email') {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) {
@@ -385,18 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return isValid;
   }
 
-  function getRequiredErrorMessage(input) {
-    const id = input.id;
-    if (id === 'owner-name') return 'Nama pemilik wajib diisi';
-    if (id === 'outlet-name') return 'Nama outlet wajib diisi';
 
-    if (input.classList.contains('gofood-email-input')) return 'Email mitra GoFood wajib diisi';
-    if (input.classList.contains('grab-username-input')) return 'Username Grab wajib diisi';
-    if (input.classList.contains('grab-password-input')) return 'Password Grab wajib diisi';
-    if (input.classList.contains('shopee-portal-input')) return 'Nama portal partner Shopee wajib diisi';
-
-    return 'Field ini wajib diisi';
-  }
 
   /* ==========================================================================
      SUBMIT HANDLING & PAYLOAD SIMULATION
