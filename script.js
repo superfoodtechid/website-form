@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     rowWrapper.innerHTML = contentHtml;
     container.appendChild(rowWrapper);
-    
+
     // Auto-required if pane is active
     const activeInputs = rowWrapper.querySelectorAll('input');
     const pane = container.closest('.credential-pane');
@@ -398,12 +398,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = input.id;
     if (id === 'owner-name') return 'Nama pemilik wajib diisi';
     if (id === 'outlet-name') return 'Nama outlet wajib diisi';
-    
+
     if (input.classList.contains('gofood-email-input')) return 'Email mitra GoFood wajib diisi';
     if (input.classList.contains('grab-username-input')) return 'Username Grab wajib diisi';
     if (input.classList.contains('grab-password-input')) return 'Password Grab wajib diisi';
     if (input.classList.contains('shopee-portal-input')) return 'Nama portal partner Shopee wajib diisi';
-    
+
     return 'Field ini wajib diisi';
   }
 
@@ -477,7 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
         emailInputs.forEach(input => {
           const emailVal = input.value.trim();
           credentialsPayload.gofood.push({ email: emailVal });
-          
+
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
             outlet: outletNameInput.value.trim(),
@@ -492,7 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const userVal = row.querySelector('.grab-username-input').value.trim();
           const passVal = row.querySelector('.grab-password-input').value.trim();
           credentialsPayload.grab.push({ username: userVal, password: passVal });
-          
+
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
             outlet: outletNameInput.value.trim(),
@@ -507,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
         portalInputs.forEach(input => {
           const portalVal = input.value.trim();
           credentialsPayload.shopee.push({ namaPortal: portalVal });
-          
+
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
             outlet: outletNameInput.value.trim(),
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify(payload)
         })
-        .then(response => response.json());
+          .then(response => response.json());
       });
 
       Promise.all(fetchPromises)

@@ -51,11 +51,11 @@ function doPost(e) {
     // 2. Pemetaan Data Kredensial sesuai jenis Aplikator
     var aplikatorLower = (data.aplikator || "").toLowerCase();
     
-    if (aplikatorLower === "gofood" || aplikatorLower === "go") {
+    if (aplikatorLower.indexOf("gofood") !== -1 || aplikatorLower === "go") {
       rowData[24] = data.email || "";      // Kolom Y: Email
-    } else if (aplikatorLower === "shopee") {
+    } else if (aplikatorLower.indexOf("shopee") !== -1) {
       rowData[22] = data.merchantName || ""; // Kolom W: Merchant Name
-    } else if (aplikatorLower === "grab" || aplikatorLower === "gr") {
+    } else if (aplikatorLower.indexOf("grab") !== -1 || aplikatorLower === "gr") {
       rowData[25] = data.username || "";   // Kolom Z: Nama Pengguna
       rowData[27] = data.password || "";   // Kolom AB: Kata Sandi
     }
