@@ -237,7 +237,7 @@ body {
 }
 
 .brand-icon {
-  background: var(--grad-primary);
+  background: #ffffff;
   color: white;
   width: 44px;
   height: 44px;
@@ -246,6 +246,7 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-glow);
+  padding: 4px;
 }
 
 .brand-text h1 {
@@ -803,6 +804,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 6px;
 }
 
 .card-title {
