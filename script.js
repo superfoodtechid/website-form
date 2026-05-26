@@ -316,20 +316,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 </svg>
               </div>
             </div>
-            <div class="input-group">
-              <input type="email" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" required placeholder=" ">
-              <label for="${emailFoodmasterId}">Email Foodmaster</label>
-              <span class="focus-bar"></span>
-              <span class="error-msg">Email tidak valid</span>
-              <div class="validation-icon">
-                <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+            <div class="input-group-with-suffix">
+              <div class="input-group">
+                <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" required placeholder=" ">
+                <label for="${emailFoodmasterId}">Email</label>
+                <span class="focus-bar"></span>
+                <span class="error-msg">Format tidak valid</span>
+                <div class="validation-icon">
+                  <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
               </div>
+              <span class="input-suffix">@foodmaster.com</span>
             </div>
           </div>
         </div>
@@ -466,7 +469,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Validasi format (hanya jika field diisi)
     if (value !== '') {
-      if (input.type === 'email') {
+      if (input.classList.contains('gofood-email-foodmaster-input')) {
+        if (/\s/.test(value) || /@/.test(value)) {
+          isValid = false;
+          errorMessage = 'Format tidak valid';
+        }
+      } else if (input.type === 'email') {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) {
           isValid = false;
@@ -550,7 +558,18 @@ document.addEventListener('DOMContentLoaded', () => {
           const duckEl = row.querySelector('.gofood-email-duck-input');
           const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
           const emailDuckVal = duckEl ? duckEl.value.trim() : '';
-          const emailFoodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
+          let emailFoodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
+          if (emailFoodmasterVal === '@foodmaster.com') {
+            emailFoodmasterVal = '';
+          } else if (emailFoodmasterVal && !emailFoodmasterVal.includes('@')) {
+            emailFoodmasterVal += '@foodmaster.com';
+          }
+
+          // Skip if both fields are empty
+          if (emailDuckVal === '' && emailFoodmasterVal === '') {
+            return;
+          }
+
           credentialsPayload.gofood.push({ emailDuck: emailDuckVal, emailFoodmaster: emailFoodmasterVal });
 
           sheetsPayloads.push({
@@ -567,6 +586,12 @@ document.addEventListener('DOMContentLoaded', () => {
         credentialsPayload.grab = [];
         rows.forEach(row => {
           const userVal = row.querySelector('.grab-username-input').value.trim();
+
+          // Skip if username is empty
+          if (userVal === '') {
+            return;
+          }
+
           const passVal = 'SuperFood@2026'; // Password tetap/hardcode
           credentialsPayload.grab.push({ username: userVal, password: passVal });
 
@@ -589,6 +614,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         portalInputs.forEach(input => {
           const portalVal = input.value.trim();
+
+          // Skip if portal name is empty
+          if (portalVal === '') {
+            return;
+          }
+
           credentialsPayload.shopee.push({ namaPortal: portalVal, bd: selectedBd });
 
           sheetsPayloads.push({
@@ -603,6 +634,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     });
+
+    // If all credential fields are empty, do not submit
+    if (sheetsPayloads.length === 0) {
+      submitBtn.disabled = false;
+      btnText.style.opacity = '1';
+      btnSpinner.classList.add('hidden');
+      showToast('Form Kosong', 'Tidak ada data kredensial yang diisi untuk dikirim.', 'error');
+      return;
+    }
 
     // Compile entire payload for UI display (JSON Output)
     submittedData = {

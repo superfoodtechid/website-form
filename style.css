@@ -416,6 +416,26 @@ body {
 /* ==========================================================================
    FLOATING LABELS & INPUT GROUPS
    ========================================================================== */
+.input-group-with-suffix {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.input-group-with-suffix .input-group {
+  flex: 1;
+}
+
+.input-suffix {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  padding-bottom: 2px;
+  user-select: none;
+}
+
 .input-group {
   position: relative;
   display: flex;
