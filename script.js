@@ -75,21 +75,20 @@ document.addEventListener('DOMContentLoaded', () => {
       // Pisahkan baris — handle \r\n dan \n
       const rawLines = text.split(/\r?\n/);
 
-      // Baris spreadsheet 6-9 = index CSV 5-8 (header di baris 0 setelah judul)
-      // Namun karena baris 1 = judul grup (Go, Gr, S, Klikit), baris 2 = header kolom
-      // maka row 6 spreadsheet = rawLines[5]
+      // Data BD Shopee ada di baris CSV index 13-16
+      // Kolom: Username = index 20, Password = index 21, Nama BD = index 24
       const newMap = {};
       const bdNames = [];
-      for (let i = 5; i <= 8; i++) {
+      for (let i = 13; i <= 16; i++) {
         if (!rawLines[i]) continue;
 
-        // Parse CSV sederhana (nilai tidak mengandung koma yang di-quote)
+        // Parse CSV
         const cols = rawLines[i].split(',');
 
-        // Kol T = index 19, Kol U = index 20, Kol X = index 23
-        const username = (cols[19] || '').trim().replace(/^"|"$/g, '');
-        const password = (cols[20] || '').trim().replace(/^"|"$/g, '');
-        const bdName   = (cols[23] || '').trim().replace(/^"|"$/g, '');
+        // Username = index 20, Password = index 21, Nama BD = index 24
+        const username = (cols[20] || '').trim().replace(/^"|"$/g, '');
+        const password = (cols[21] || '').trim().replace(/^"|"$/g, '');
+        const bdName   = (cols[24] || '').trim().replace(/^"|"$/g, '');
 
         if (bdName && username) {
           newMap[bdName] = { username, password };
