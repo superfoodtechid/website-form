@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         );
       }
     }
+    checkFormValidity();
   }
 
   // Capitalize helpers
@@ -282,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     rowWrapper.addEventListener('animationend', () => {
       rowWrapper.remove();
       showToast('Akun Dihapus', 'Field kredensial tambahan telah dihapus.', 'info');
+      checkFormValidity();
     });
   });
 
@@ -332,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   </svg>
                 </div>
               </div>
-              <span class="input-suffix">@foodmaster.com</span>
+              <span class="input-suffix">@myfoodmaster.com</span>
             </div>
           </div>
         </div>
@@ -434,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `Field tambahan untuk ${capitalizeWord(target)} berhasil dibuat.`,
       'info'
     );
+    checkFormValidity();
   }
 
   /* ==========================================================================
@@ -445,13 +448,112 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.tagName === 'INPUT') {
       validateField(e.target);
     }
+    checkFormValidity();
   });
 
   credentialForm.addEventListener('focusout', (e) => {
     if (e.target.tagName === 'INPUT') {
       validateField(e.target);
     }
+    checkFormValidity();
   });
+
+  credentialForm.addEventListener('change', () => {
+    checkFormValidity();
+  });
+
+  function checkFormValidity() {
+    // 1. Owner Name
+    const ownerVal = ownerNameInput.value.trim();
+    if (ownerVal === '') {
+      submitBtn.disabled = true;
+      return;
+    }
+
+    // 2. Outlet Name
+    const outletVal = outletNameInput.value.trim();
+    if (outletVal === '') {
+      submitBtn.disabled = true;
+      return;
+    }
+
+    // 3. BD selection
+    const bdVal = bdSelect.value;
+    if (bdVal === '') {
+      submitBtn.disabled = true;
+      return;
+    }
+
+    // 4. At least one applicator
+    const selectedAplikators = Array.from(document.querySelectorAll('input[name="aplikator"]:checked')).map(cb => cb.value);
+    if (selectedAplikators.length === 0) {
+      submitBtn.disabled = true;
+      return;
+    }
+
+    // 5. Active credential pane inputs
+    let allCredsValid = true;
+    selectedAplikators.forEach(aplikator => {
+      if (aplikator === 'gofood') {
+        const rows = document.querySelectorAll('#pane-gofood .credential-row-wrapper');
+        if (rows.length === 0) {
+          allCredsValid = false;
+        }
+        rows.forEach(row => {
+          const duckEl = row.querySelector('.gofood-email-duck-input');
+          const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
+          const duckVal = duckEl ? duckEl.value.trim() : '';
+          const foodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
+
+          if (duckVal === '' || foodmasterVal === '') {
+            allCredsValid = false;
+          }
+          if (duckEl && duckEl.closest('.input-group')?.classList.contains('is-invalid')) {
+            allCredsValid = false;
+          }
+          if (foodmasterEl && foodmasterEl.closest('.input-group')?.classList.contains('is-invalid')) {
+            allCredsValid = false;
+          }
+        });
+      } else if (aplikator === 'grab') {
+        const rows = document.querySelectorAll('#pane-grab .credential-row-wrapper');
+        if (rows.length === 0) {
+          allCredsValid = false;
+        }
+        rows.forEach(row => {
+          const userEl = row.querySelector('.grab-username-input');
+          const userVal = userEl ? userEl.value.trim() : '';
+          if (userVal === '') {
+            allCredsValid = false;
+          }
+          if (userEl && userEl.closest('.input-group')?.classList.contains('is-invalid')) {
+            allCredsValid = false;
+          }
+        });
+      } else if (aplikator === 'shopee') {
+        const portalInputs = document.querySelectorAll('#pane-shopee .shopee-portal-input');
+        if (portalInputs.length === 0) {
+          allCredsValid = false;
+        }
+        portalInputs.forEach(input => {
+          const portalVal = input.value.trim();
+          if (portalVal === '') {
+            allCredsValid = false;
+          }
+          if (input.closest('.input-group')?.classList.contains('is-invalid')) {
+            allCredsValid = false;
+          }
+        });
+      }
+    });
+
+    if (!allCredsValid) {
+      submitBtn.disabled = true;
+      return;
+    }
+
+    submitBtn.disabled = false;
+  }
 
   function validateField(input) {
     // Check if the input is inside an active pane or is a static field
@@ -559,10 +661,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
           const emailDuckVal = duckEl ? duckEl.value.trim() : '';
           let emailFoodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
-          if (emailFoodmasterVal === '@foodmaster.com') {
+          if (emailFoodmasterVal === '@myfoodmaster.com') {
             emailFoodmasterVal = '';
           } else if (emailFoodmasterVal && !emailFoodmasterVal.includes('@')) {
-            emailFoodmasterVal += '@foodmaster.com';
+            emailFoodmasterVal += '@myfoodmaster.com';
           }
 
           // Skip if both fields are empty
@@ -837,5 +939,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 300);
     }, 4000);
   }
+
+  // Initialize button state on page load
+  checkFormValidity();
 
 });
