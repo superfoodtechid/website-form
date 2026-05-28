@@ -6,13 +6,12 @@
  * MAPPING SPESIFIKASI:
  * Kolom A (Index 0)  -> Owner (Nama Owner)
  * Kolom B (Index 1)  -> Nama Outlet (Nama Outlet)
- * Kolom D (Index 3)  -> Aplikasi (Nama Aplikator: GoFood / Grab / Shopee)
- * Kolom W (Index 22) -> Merchant Name (jika Shopee)
- * Kolom Y (Index 24) -> Email Duck (jika GoFood)
- * Kolom Z (Index 25) -> Email Foodmaster (jika GoFood)
- * Kolom AA (Index 26) -> Nama Pengguna (Grab: dari input / Shopee: dari config sheet)
- * Kolom AC (Index 28) -> Kata Sandi (Grab: dari input / Shopee: dari config sheet)
- * Kolom AI (Index 34) -> Status (Selalu mengirim "Live")
+ * Kolom C (Index 2)  -> Aplikasi (Nama Aplikator: GoFood / Grab / Shopee)
+ * Kolom D (Index 3)  -> Merchant Name (jika Shopee)
+ * Kolom E (Index 4)  -> Email Duck (jika GoFood)
+ * Kolom F (Index 5)  -> Email Foodmaster (jika GoFood)
+ * Kolom G (Index 6)  -> Nama Pengguna (Grab: dari input / Shopee: dari config sheet)
+ * Kolom H (Index 7)  -> Kata Sandi (Grab: dari input / Shopee: dari config sheet)
  *
  * BD CONFIG (sheet pertama / gid=0):
  * Baris 8-11, Kolom T (20) = Username, Kolom U (21) = Password, Kolom X (24) = Nama BD
@@ -63,34 +62,33 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // Inisialisasi baris kosong sepanjang 35 kolom (Kolom A sampai AI)
+    // Inisialisasi baris kosong sepanjang 8 kolom (Kolom A sampai H)
     var rowData = [];
-    for (var i = 0; i < 35; i++) {
+    for (var i = 0; i < 8; i++) {
       rowData.push("");
     }
     
-    // 1. Pemetaan Data Statis (Owner, Outlet, Aplikasi, Status)
+    // 1. Pemetaan Data Statis (Owner, Outlet, Aplikasi)
     rowData[0] = data.owner || "";         // Kolom A: Owner
     rowData[1] = data.outlet || "";        // Kolom B: Nama Outlet
-    rowData[3] = data.aplikator || "";     // Kolom D: Aplikasi
-    rowData[34] = "Live";                  // Kolom AI: Status
+    rowData[2] = data.aplikator || "";     // Kolom C: Aplikasi
     
     // 2. Pemetaan Data Kredensial sesuai jenis Aplikator
     var aplikatorLower = (data.aplikator || "").toLowerCase();
     
     if (aplikatorLower.indexOf("gofood") !== -1 || aplikatorLower === "go") {
-      rowData[24] = data.emailDuck || "";          // Kolom Y: Email Duck
-      rowData[25] = data.emailFoodmaster || "";    // Kolom Z: Email Foodmaster
+      rowData[4] = data.emailDuck || "";          // Kolom E: Email Duck
+      rowData[5] = data.emailFoodmaster || "";    // Kolom F: Email Foodmaster
 
     } else if (aplikatorLower.indexOf("shopee") !== -1) {
       // Username & Password dikirim langsung dari frontend (sudah di-resolve dari CSV)
-      rowData[22] = data.merchantName || "";  // Kolom W: Merchant Name
-      rowData[26] = data.username || "";       // Kolom AA: Username BD
-      rowData[28] = data.password || "";       // Kolom AC: Password BD
+      rowData[3] = data.merchantName || "";    // Kolom D: Merchant Name
+      rowData[6] = data.username || "";        // Kolom G: Username BD
+      rowData[7] = data.password || "";        // Kolom H: Password BD
 
     } else if (aplikatorLower.indexOf("grab") !== -1 || aplikatorLower === "gr") {
-      rowData[26] = data.username || "";   // Kolom AA: Nama Pengguna
-      rowData[28] = data.password || "";   // Kolom AC: Kata Sandi
+      rowData[6] = data.username || "";        // Kolom G: Nama Pengguna
+      rowData[7] = data.password || "";        // Kolom H: Kata Sandi
     }
     
     // 3. Sisipkan baris baru secara presisi (Mengabaikan format/formula kosong di kolom lain)
