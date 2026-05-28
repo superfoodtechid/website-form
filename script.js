@@ -394,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     } else if (target === 'grab') {
       const usernameId = `grab-username-${uniqueIdSuffix}`;
-      const passwordId = `grab-password-${uniqueIdSuffix}`;
       contentHtml = `
         <div class="credential-row-content">
           <div class="form-grid">
@@ -410,16 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </div>
-            </div>
-            <div class="input-group password-group">
-              <input type="text" id="${passwordId}" class="grab-password-input" name="grabPassword" value="SuperFood@2026" disabled>
-              <label for="${passwordId}">Password</label>
-              <span class="focus-bar"></span>
-              <div class="validation-icon">
-                <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
             </div>
