@@ -1,7 +1,7 @@
 /**
  * Google Apps Script - SuperFood Credentials Integration Backend
  * Spreadsheet URL: https://docs.google.com/spreadsheets/d/14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0/edit?gid=0#gid=0
- * Target Sheet Name: "credential"
+ * Target Sheet Name: "Baseline"
  *
  * MAPPING SPESIFIKASI:
  * Kolom A (Index 0)  -> Owner (Nama Owner)
@@ -15,24 +15,24 @@
  * Kolom AI (Index 34) -> Status (Selalu mengirim "Live")
  *
  * BD CONFIG (sheet pertama / gid=0):
- * Baris 8-11, Kolom U (21) = Username, Kolom V (22) = Password, Kolom Y (25) = Nama BD
+ * Baris 8-11, Kolom T (20) = Username, Kolom U (21) = Password, Kolom X (24) = Nama BD
  */
 
 /**
- * Membaca kredensial BD dari sheet konfigurasi (sheet pertama, baris 6-9).
- * @param {string} bdName - Nama BD, misal "BD A"
+ * Membaca kredensial BD dari sheet konfigurasi (sheet pertama, baris 8-11).
+ * @param {string} bdName - Nama BD, misal "BD Fadjar"
  * @returns {{ username: string, password: string }}
  */
 function getBdCredentials(bdName) {
   var ss = SpreadsheetApp.openById("14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0");
   var configSheet = ss.getSheets()[0]; // Sheet pertama (gid=0)
 
-  // Baris 8-11, Kolom U=21, V=22, Y=25 (1-indexed)
+  // Baris 8-11, Kolom T=20, U=21, X=24 (1-indexed)
   for (var row = 8; row <= 11; row++) {
-    var bdCell = configSheet.getRange(row, 25).getValue().toString().trim();
-    if (bdCell === bdName) {
-      var username = configSheet.getRange(row, 21).getValue().toString().trim();
-      var password = configSheet.getRange(row, 22).getValue().toString().trim();
+    var bdCell = configSheet.getRange(row, 24).getValue().toString().trim();
+    if (bdCell && bdCell === bdName) {
+      var username = configSheet.getRange(row, 20).getValue().toString().trim();
+      var password = configSheet.getRange(row, 21).getValue().toString().trim();
       return { username: username, password: password };
     }
   }
@@ -54,12 +54,12 @@ function doPost(e) {
     // Target Google Spreadsheet ID
     var sheetId = "14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0";
     var ss = SpreadsheetApp.openById(sheetId);
-    var sheet = ss.getSheetByName("credential");
+    var sheet = ss.getSheetByName("Baseline");
     
     if (!sheet) {
       return ContentService.createTextOutput(JSON.stringify({ 
         status: "error", 
-        message: "Nama sheet 'credential' tidak ditemukan!" 
+        message: "Nama sheet 'Baseline' tidak ditemukan!" 
       })).setMimeType(ContentService.MimeType.JSON);
     }
     

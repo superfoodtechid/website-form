@@ -64,36 +64,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ==========================================================================
      LOAD BD MAP DARI GOOGLE SHEET (DINAMIS)
-     Row 6-9 spreadsheet | Kol T = username | Kol U = password | Kol X = nama BD
      ========================================================================== */
   async function loadBdMapFromSheet() {
     try {
-      const resp = await fetch(BD_CONFIG_CSV_URL);
+      // URL ditambahkan parameter cache-busting timestamp (opsional tapi membantu)
+      const resp = await fetch(BD_CONFIG_CSV_URL + "&t=" + new Date().getTime());
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const text = await resp.text();
 
-      // Pisahkan baris — handle \r\n dan \n
-      const rawLines = text.split(/\r?\n/);
+      // Simple CSV parser yang handle quotes
+      const parseCSV = (str) => {
+        const arr = [];
+        let quote = false;
+        let row = 0, col = 0;
+        for (let c = 0; c < str.length; c++) {
+          let cc = str[c], nc = str[c+1];
+          arr[row] = arr[row] || [];
+          arr[row][col] = arr[row][col] || '';
+          if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }
+          if (cc == '"') { quote = !quote; continue; }
+          if (cc == ',' && !quote) { ++col; continue; }
+          if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; continue; }
+          if (cc == '\n' && !quote) { ++row; col = 0; continue; }
+          if (cc == '\r' && !quote) { ++row; col = 0; continue; }
+          arr[row][col] += cc;
+        }
+        return arr;
+      };
 
-      // Data BD Shopee ada di baris CSV index 9-12
-      // (embedded newline di cell email GoFood baris 3-4 menyebabkan CSV shift +4)
-      // Kolom: Username = index 20, Password = index 21, Nama BD = index 24
+      const rows = parseCSV(text);
+
       const newMap = {};
       const bdNames = [];
-      for (let i = 9; i <= 12; i++) {
-        if (!rawLines[i]) continue;
+      
+      // Mengambil hanya pada baris 8-11 di Google Sheets (index 7 sampai 10 di array)
+      // Kolom 0-indexed: T (Username) = 19, U (Password) = 20, X (BD) = 23
+      for (let i = 7; i <= 10; i++) {
+        const cols = rows[i];
+        if (!cols || cols.length < 24) continue;
 
-        // Parse CSV
-        const cols = rawLines[i].split(',');
+        const username = (cols[19] || '').trim();
+        const password = (cols[20] || '').trim();
+        const bdName   = (cols[23] || '').trim();
 
-        // Username = index 20, Password = index 21, Nama BD = index 24
-        const username = (cols[20] || '').trim().replace(/^"|"$/g, '');
-        const password = (cols[21] || '').trim().replace(/^"|"$/g, '');
-        const bdName   = (cols[24] || '').trim().replace(/^"|"$/g, '');
-
+        // Tambahkan ke map jika valid
         if (bdName && username) {
           newMap[bdName] = { username, password };
-          bdNames.push(bdName);
+          if (!bdNames.includes(bdName)) {
+            bdNames.push(bdName);
+          }
         }
       }
 
