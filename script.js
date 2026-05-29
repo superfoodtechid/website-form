@@ -176,11 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     htmlElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
-    showToast(
-      'Tema Diganti',
-      `Menggunakan mode ${newTheme === 'dark' ? 'gelap' : 'terang'}.`,
-      'info'
-    );
   });
 
   /* ==========================================================================
@@ -237,13 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isChecked) {
       pane.classList.add('active');
-      if (!isInit) {
-        showToast(
-          'Aplikator Ditambahkan',
-          `Input kredensial ${capitalizeWord(aplikator)} ditampilkan.`,
-          'info'
-        );
-      }
     } else {
       pane.classList.remove('active');
       // Matikan required attribute dan bersihkan styling validasi
@@ -254,13 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
           group.classList.remove('is-valid', 'is-invalid');
         }
       });
-      if (!isInit) {
-        showToast(
-          'Aplikator Dihapus',
-          `Input kredensial ${capitalizeWord(aplikator)} disembunyikan.`,
-          'info'
-        );
-      }
     }
     checkFormValidity();
   }
@@ -327,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Remove from DOM after animation completes
     rowWrapper.addEventListener('animationend', () => {
       rowWrapper.remove();
-      showToast('Akun Dihapus', 'Field kredensial tambahan telah dihapus.', 'info');
       checkFormValidity();
     });
   });
@@ -463,11 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
       firstInput.focus();
     }
 
-    showToast(
-      'Akun Ditambahkan',
-      `Field tambahan untuk ${capitalizeWord(target)} berhasil dibuat.`,
-      'info'
-    );
     checkFormValidity();
   }
 
@@ -997,7 +972,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         toast.remove();
       }, 300);
-    }, 4000);
+    }, 2000);
   }
 
   // Initialize button state on page load
