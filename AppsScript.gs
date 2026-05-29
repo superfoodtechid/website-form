@@ -12,6 +12,7 @@
  * Kolom F (Index 5)  -> Email Foodmaster (jika GoFood)
  * Kolom G (Index 6)  -> Nama Pengguna (Grab: dari input / Shopee: dari config sheet)
  * Kolom H (Index 7)  -> Kata Sandi (Grab: dari input / Shopee: dari config sheet)
+ * Kolom I (Index 8)  -> Nama BD (Pilihan BD dari dropdown)
  *
  * BD CONFIG (sheet pertama / gid=0):
  * Baris 8-11, Kolom T (20) = Username, Kolom U (21) = Password, Kolom X (24) = Nama BD
@@ -62,16 +63,17 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // Inisialisasi baris kosong sepanjang 8 kolom (Kolom A sampai H)
+    // Inisialisasi baris kosong sepanjang 9 kolom (Kolom A sampai I)
     var rowData = [];
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 9; i++) {
       rowData.push("");
     }
     
-    // 1. Pemetaan Data Statis (Owner, Outlet, Aplikasi)
+    // 1. Pemetaan Data Statis (Owner, Outlet, Aplikasi, BD)
     rowData[0] = data.owner || "";         // Kolom A: Owner
     rowData[1] = data.outlet || "";        // Kolom B: Nama Outlet
     rowData[2] = data.aplikator || "";     // Kolom C: Aplikasi
+    rowData[8] = data.bd || "";            // Kolom I: Nama BD
     
     // 2. Pemetaan Data Kredensial sesuai jenis Aplikator
     var aplikatorLower = (data.aplikator || "").toLowerCase();
