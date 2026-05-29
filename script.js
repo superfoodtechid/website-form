@@ -926,7 +926,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closeSuccessModal() {
     successModal.classList.remove('open');
-    // Form tidak di-reset agar semua inputan user tidak hilang setelah submit
+    resetForm();
+  }
+
+  function resetForm() {
+    // 1. Reset field statis (owner, outlet, BD)
+    ownerNameInput.value = '';
+    outletNameInput.value = '';
+    bdSelect.value = '';
+    updateBdSelectLabel();
+
+    // 2. Hapus kelas validasi dari semua input-group & select-group
+    credentialForm.querySelectorAll('.input-group, .select-group').forEach(group => {
+      group.classList.remove('is-valid', 'is-invalid');
+    });
+
+    // 3. Reset checkbox aplikator (unchecked semua)
+    aplikatorCheckboxes.forEach(cb => {
+      cb.checked = false;
+      toggleAplikatorPane(cb.value, false, true);
+    });
+
+    // 4. Hapus semua dynamic credential rows dari setiap container
+    ['gofood', 'grab', 'shopee'].forEach(app => {
+      const container = document.getElementById(`${app}-rows-container`);
+      if (container) container.innerHTML = '';
+    });
+
+    // 5. Reset state tombol submit
+    checkFormValidity();
   }
 
 
