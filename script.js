@@ -35,17 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
   const ENABLE_SHEET_SUBMISSION = true;
 
-  // URL pubhtml/sheet Google Sheet konfigurasi BD (sheet gid=565510790)
-  // Endpoint /pubhtml/sheet mengandung HTML tabel statis (tidak perlu JS untuk load)
-  const BD_CONFIG_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYSUnKOqk29LCktTxdb0wPLbWMbRaWRP3eC_UA4AwYod1FW6zDMhtLMC5ghIvot2B8upCDfBsn-TCP/pubhtml/sheet?headers=false&gid=565510790";
+  // URL CSV Google Sheet konfigurasi BD (sheet gid=565510790)
+  // CSV lebih responsif terhadap perubahan dibanding pubhtml yang di-cache Google
+  const BD_CONFIG_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYSUnKOqk29LCktTxdb0wPLbWMbRaWRP3eC_UA4AwYod1FW6zDMhtLMC5ghIvot2B8upCDfBsn-TCP/pub?gid=565510790&single=true&output=csv";
 
   // BD Map — akan diisi dari sheet saat halaman load
-  // Fallback hardcode digunakan jika fetch gagal
   let bdMap = {};
 
   // Isi dropdown dengan nama BD
   function populateBdDropdown(bdNames) {
-    // Hapus semua opsi kecuali placeholder (index 0)
     while (bdSelect.options.length > 1) {
       bdSelect.remove(1);
     }
@@ -59,36 +57,54 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
-     LOAD BD MAP DARI GOOGLE SHEET PUBHTML (DINAMIS)
+     LOAD BD MAP DARI GOOGLE SHEET CSV (DINAMIS)
      ========================================================================== */
   async function loadBdMapFromSheet() {
     try {
-      // Cache-busting agar selalu fresh
+      // Cache-busting agar selalu fresh dari Google Sheet
       const cacheBuster = `&t=${Date.now()}`;
       const resp = await fetch(BD_CONFIG_URL + cacheBuster, { cache: 'no-store' });
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const text = await resp.text();
 
-      // Parse HTML menggunakan DOMParser
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(text, 'text/html');
+      // Parser CSV
+      const parseCSV = (str) => {
+        const rows = [];
+        let currentRow = [], currentCell = '', inQuotes = false;
+        for (let i = 0; i < str.length; i++) {
+          const char = str[i], nextChar = str[i + 1];
+          if (char === '"') {
+            if (inQuotes && nextChar === '"') { currentCell += '"'; i++; }
+            else { inQuotes = !inQuotes; }
+          } else if (char === ',' && !inQuotes) {
+            currentRow.push(currentCell); currentCell = '';
+          } else if (char === '\n' && !inQuotes) {
+            currentRow.push(currentCell); rows.push(currentRow);
+            currentRow = []; currentCell = '';
+          } else if (char !== '\r') {
+            currentCell += char;
+          }
+        }
+        currentRow.push(currentCell);
+        rows.push(currentRow);
+        return rows;
+      };
 
-      // Ambil semua baris dari tabel (pubhtml menggunakan <tbody>)
-      const allRows = Array.from(doc.querySelectorAll('table tbody tr'));
-      console.log('[BD Debug] Total baris HTML ter-parse:', allRows.length);
+      const rows = parseCSV(text);
+      console.log('[BD Debug] Total baris CSV:', rows.length);
 
       const newMap = {};
       const bdNames = [];
 
-      // pubhtml: kolom pertama (th) adalah nomor baris, lalu td[0..8]
-      // td[4]=Username(E), td[5]=Password(F), td[8]=BD(I)
-      // Mulai dari baris sheet ke-7 → index ke-6 di allRows
+      // Kolom CSV dari gid=565510790 (0-indexed, tanpa offset th):
+      // A(0)=No, B(1)=Portal, C(2)=Role, D(3)=Phone,
+      // E(4)=Username, F(5)=Password, G(6)=Notes, H(7)=OTP, I(8)=BD
+      // Mulai dari baris sheet ke-7 → index ke-6 di array CSV
       let emptyStreak = 0;
-      for (let i = 6; i < allRows.length; i++) {
-        const cells = allRows[i].querySelectorAll('td');
-        const bdName  = cells[8] ? cells[8].textContent.trim() : '';
+      for (let i = 6; i < rows.length; i++) {
+        const cols = rows[i];
+        const bdName = (cols[8] || '').trim();
 
-        // Berhenti setelah 3 baris kosong berturut-turut
         if (!bdName) {
           emptyStreak++;
           if (emptyStreak >= 3) break;
@@ -96,8 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         emptyStreak = 0;
 
-        const username = cells[4] ? cells[4].textContent.trim() : '';
-        const password = cells[5] ? cells[5].textContent.trim() : '';
+        const username = (cols[4] || '').trim();
+        const password = (cols[5] || '').trim();
 
         console.log(`[BD Debug] Row ${i + 1} → bdName="${bdName}", username="${username}"`);
 
