@@ -35,17 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
   const ENABLE_SHEET_SUBMISSION = true;
 
-  // URL CSV publik Google Sheet konfigurasi BD
-  const BD_CONFIG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYSUnKOqk29LCktTxdb0wPLbWMbRaWRP3eC_UA4AwYod1FW6zDMhtLMC5ghIvot2B8upCDfBsn-TCP/pub?gid=0&single=true&output=csv";
+  // URL pubhtml Google Sheet konfigurasi BD (sheet gid=565510790)
+  const BD_CONFIG_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYSUnKOqk29LCktTxdb0wPLbWMbRaWRP3eC_UA4AwYod1FW6zDMhtLMC5ghIvot2B8upCDfBsn-TCP/pubhtml?gid=565510790&single=true";
 
   // BD Map — akan diisi dari sheet saat halaman load
   // Fallback hardcode digunakan jika fetch gagal
-  let bdMap = {
-    'BD Fadjar': { username: 'auto7303', password: 'Auto@7303' },
-    'BD B': { username: 'auto7304', password: 'Auto@7304_' },
-    'BD C': { username: 'auto7307', password: 'Auto@7307' },
-    'BD D': { username: 'auto7308', password: 'Auto@7308' }
-  };
+  let bdMap = {};
 
   // Isi dropdown dengan nama BD
   function populateBdDropdown(bdNames) {
@@ -63,74 +58,47 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
-     LOAD BD MAP DARI GOOGLE SHEET (DINAMIS)
+     LOAD BD MAP DARI GOOGLE SHEET PUBHTML (DINAMIS)
      ========================================================================== */
   async function loadBdMapFromSheet() {
     try {
-      const resp = await fetch(BD_CONFIG_CSV_URL);
+      // Cache-busting agar selalu fresh
+      const cacheBuster = `&t=${Date.now()}`;
+      const resp = await fetch(BD_CONFIG_URL + cacheBuster, { cache: 'no-store' });
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const text = await resp.text();
 
-      // Parser CSV yang lebih kuat
-      const parseCSV = (str) => {
-        const rows = [];
-        let currentRow = [];
-        let currentCell = '';
-        let inQuotes = false;
-        
-        for (let i = 0; i < str.length; i++) {
-          const char = str[i];
-          const nextChar = str[i + 1];
-          
-          if (char === '"') {
-            if (inQuotes && nextChar === '"') {
-              currentCell += '"';
-              i++; // Skip the escaped quote
-            } else {
-              inQuotes = !inQuotes;
-            }
-          } else if (char === ',' && !inQuotes) {
-            currentRow.push(currentCell);
-            currentCell = '';
-          } else if (char === '\n' && !inQuotes) {
-            currentRow.push(currentCell);
-            rows.push(currentRow);
-            currentRow = [];
-            currentCell = '';
-          } else if (char === '\r' && !inQuotes) {
-            // Abaikan \r
-          } else {
-            currentCell += char;
-          }
-        }
-        currentRow.push(currentCell);
-        rows.push(currentRow);
-        return rows;
-      };
+      // Parse HTML menggunakan DOMParser
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
 
-      const rows = parseCSV(text);
-
-      console.log('[BD Debug] Total baris CSV yang ter-parse:', rows.length);
+      // Ambil semua baris dari tabel (pubhtml menggunakan <tbody>)
+      const allRows = Array.from(doc.querySelectorAll('table tbody tr'));
+      console.log('[BD Debug] Total baris HTML ter-parse:', allRows.length);
 
       const newMap = {};
       const bdNames = [];
-      
-      // Mengambil hanya pada baris 8-11 di Google Sheets (index 7 sampai 10 di array)
-      // Kolom 0-indexed: T (Username) = 19, U (Password) = 20, X (BD) = 23
-      for (let i = 7; i <= 10; i++) {
-        const cols = rows[i];
-        console.log(`[BD Debug] Row ${i} (${cols ? cols.length : 'null'} cols):`, cols ? cols.slice(15, 25) : 'KOSONG');
 
-        if (!cols || cols.length < 24) {
-          console.warn(`[BD Debug] Row ${i} dilewati: tidak cukup kolom (${cols ? cols.length : 0})`);
+      // pubhtml: kolom pertama (th) adalah nomor baris, lalu td[0..8]
+      // td[4]=Username(E), td[5]=Password(F), td[8]=BD(I)
+      // Mulai dari baris sheet ke-7 → index ke-6 di allRows
+      let emptyStreak = 0;
+      for (let i = 6; i < allRows.length; i++) {
+        const cells = allRows[i].querySelectorAll('td');
+        const bdName  = cells[8] ? cells[8].textContent.trim() : '';
+
+        // Berhenti setelah 3 baris kosong berturut-turut
+        if (!bdName) {
+          emptyStreak++;
+          if (emptyStreak >= 3) break;
           continue;
         }
+        emptyStreak = 0;
 
-        const username = (cols[19] || '').trim();
-        const password = (cols[20] || '').trim();
-        const bdName   = (cols[23] || '').trim();
+        const username = cells[4] ? cells[4].textContent.trim() : '';
+        const password = cells[5] ? cells[5].textContent.trim() : '';
 
-        console.log(`[BD Debug] Row ${i} → username="${username}", bdName="${bdName}"`);
+        console.log(`[BD Debug] Row ${i + 1} → bdName="${bdName}", username="${username}"`);
 
         if (bdName && username) {
           newMap[bdName] = { username, password };
@@ -147,12 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[BD Map] Berhasil dimuat dari sheet:', bdMap);
         populateBdDropdown(bdNames);
       } else {
-        console.warn('[BD Map] Sheet tidak menghasilkan data valid, fallback ke hardcode.');
-        populateBdDropdown(Object.keys(bdMap));
+        console.warn('[BD Map] Sheet tidak menghasilkan data valid, dropdown kosong.');
+        populateBdDropdown([]);
       }
     } catch (err) {
-      console.warn('[BD Map] Gagal fetch sheet, gunakan hardcode:', err.message);
-      populateBdDropdown(Object.keys(bdMap));
+      console.warn('[BD Map] Gagal fetch sheet:', err.message);
+      populateBdDropdown([]);
     }
   }
 

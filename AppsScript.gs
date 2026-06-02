@@ -1,46 +1,4 @@
-/**
- * Google Apps Script - SuperFood Credentials Integration Backend
- * Spreadsheet URL: https://docs.google.com/spreadsheets/d/14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0/edit?gid=0#gid=0
- * Target Sheet Name: "Baseline"
- *
- * MAPPING SPESIFIKASI:
- * Kolom A (Index 0)  -> Owner (Nama Owner)
- * Kolom B (Index 1)  -> Nama Outlet (Nama Outlet)
- * Kolom C (Index 2)  -> Aplikasi (Nama Aplikator: GoFood / Grab / Shopee)
- * Kolom D (Index 3)  -> Merchant Name (jika Shopee)
- * Kolom E (Index 4)  -> Email Duck (jika GoFood)
- * Kolom F (Index 5)  -> Email Foodmaster (jika GoFood)
- * Kolom G (Index 6)  -> Nama Pengguna (Grab: dari input / Shopee: dari config sheet)
- * Kolom H (Index 7)  -> Kata Sandi (Grab: dari input / Shopee: dari config sheet)
- * Kolom I (Index 8)  -> Nama BD (Pilihan BD dari dropdown)
- * Kolom J (Index 9)  -> Nama Akses (jika GoFood)
- *
- * BD CONFIG (sheet pertama / gid=0):
- * Baris 8-11, Kolom T (20) = Username, Kolom U (21) = Password, Kolom X (24) = Nama BD
- */
 
-/**
- * Membaca kredensial BD dari sheet konfigurasi (sheet pertama, baris 8-11).
- * @param {string} bdName - Nama BD, misal "BD Fadjar"
- * @returns {{ username: string, password: string }}
- */
-function getBdCredentials(bdName) {
-  var ss = SpreadsheetApp.openById("14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0");
-  var configSheet = ss.getSheets()[0]; // Sheet pertama (gid=0)
-
-  // Baris 8-11, Kolom T=20, U=21, X=24 (1-indexed)
-  for (var row = 8; row <= 11; row++) {
-    var bdCell = configSheet.getRange(row, 24).getValue().toString().trim();
-    if (bdCell && bdCell === bdName) {
-      var username = configSheet.getRange(row, 20).getValue().toString().trim();
-      var password = configSheet.getRange(row, 21).getValue().toString().trim();
-      return { username: username, password: password };
-    }
-  }
-
-  // Tidak ditemukan — kembalikan kosong
-  return { username: '', password: '' };
-}
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
