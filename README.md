@@ -75,7 +75,7 @@ flowchart LR
 ## ✨ Fitur Utama
 
 1. **Adaptive Input Fields**: Tampilan kolom kredensial berubah secara dinamis berdasarkan aplikator terpilih:
-   * **GoFood**: Input **Email Duck** + **Email Foodmaster** (dengan suffix `@myfoodmaster.com` otomatis).
+   * **GoFood**: Input **Email Duck** + **Email Foodmaster** (dengan suffix `@byfoodmaster.com` otomatis).
    * **GrabFood**: Hanya input **Username** — Password `SuperFood@2026` dikirim otomatis ke sheet (tidak ditampilkan ke user).
    * **ShopeeFood**: Input **Nama Portal** — Username & Password BD diambil otomatis dari Google Sheet SF Tech.
 2. **Dropdown BD Dinamis**: Pilihan BD (Business Development) diambil secara realtime dari Google Sheet "SF Tech" setiap kali halaman dibuka.

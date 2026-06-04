@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <img class="invalid" src="Logo/cross.png" alt="Invalid">
                 </div>
               </div>
-              <span class="input-suffix">@myfoodmaster.com</span>
+              <span class="input-suffix">@byfoodmaster.com</span>
             </div>
           </div>
         </div>
@@ -681,10 +681,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const emailDuckVal = duckEl ? duckEl.value.trim() : '';
           const namaAksesVal = namaAksesEl ? namaAksesEl.value.trim() : '';
           let emailFoodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
-          if (emailFoodmasterVal === '@myfoodmaster.com') {
+          if (emailFoodmasterVal === '@byfoodmaster.com') {
             emailFoodmasterVal = '';
           } else if (emailFoodmasterVal && !emailFoodmasterVal.includes('@')) {
-            emailFoodmasterVal += '@myfoodmaster.com';
+            emailFoodmasterVal += '@byfoodmaster.com';
           }
 
           // Skip jika semua field utama kosong
