@@ -36,8 +36,8 @@ flowchart TD
 flowchart LR
     APP{Aplikator Dipilih}
 
-    APP -- GoFood --> GF[Input Email Duck + Email Foodmaster]
-    GF --> GF_OUT["Sheet: Kol.E - Email Duck\nKol.F - Email Foodmaster"]
+    APP -- GoFood --> GF[Input Nama Akses + Email Duck + Email Foodmaster]
+    GF --> GF_OUT["Sheet: Kol.E - Email Duck\nKol.F - Email Foodmaster\nKol.J - Nama Akses"]
 
     APP -- GrabFood --> GR[Input Username saja]
     GR --> GR_OUT["Sheet: Kol.G - Username\nKol.H - Password default SuperFood@2026"]
@@ -62,9 +62,9 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    SFTECH[(SF Tech GSheet\ngid=0)] -- Publish to Web CSV --> CSV[CSV publik]
+    SFTECH[(Google Sheet BD\ngid=565510790)] -- Publish to Web CSV --> CSV[CSV publik]
     CSV -- fetch saat halaman load --> FE[Frontend script.js]
-    FE -- Parse baris 8-11\nKol.T Username\nKol.U Password\nKol.X Nama BD --> BDMAP[bdMap objek]
+    FE -- Parse mulai baris 7\nKol.E Username\nKol.F Password\nKol.I Nama BD --> BDMAP[bdMap objek]
     BDMAP -- Populate --> DD[Dropdown Pilih BD]
     DD -- User pilih BD --> SUB[Submit ShopeeFood]
     SUB -- username + password --> PAYLOAD[JSON Payload ke Apps Script]
@@ -75,10 +75,10 @@ flowchart LR
 ## ✨ Fitur Utama
 
 1. **Adaptive Input Fields**: Tampilan kolom kredensial berubah secara dinamis berdasarkan aplikator terpilih:
-   * **GoFood**: Input **Email Duck** + **Email Foodmaster** (dengan suffix `@byfoodmaster.com` otomatis).
+   * **GoFood**: Input **Nama Akses**, **Email Duck**, dan **Email Foodmaster** (dengan suffix `@byfoodmaster.com` otomatis).
    * **GrabFood**: Hanya input **Username** — Password `SuperFood@2026` dikirim otomatis ke sheet (tidak ditampilkan ke user).
-   * **ShopeeFood**: Input **Nama Portal** — Username & Password BD diambil otomatis dari Google Sheet SF Tech.
-2. **Dropdown BD Dinamis**: Pilihan BD (Business Development) diambil secara realtime dari Google Sheet "SF Tech" setiap kali halaman dibuka.
+   * **ShopeeFood**: Input **Nama Portal** — Username & Password BD diambil otomatis dari Google Sheet konfigurasi BD.
+2. **Dropdown BD Dinamis**: Pilihan BD (Business Development) diambil secara realtime dari Google Sheet konfigurasi BD setiap kali halaman dibuka.
 3. **Multi-Row Input**: Setiap aplikator mendukung penambahan akun lebih dari satu dengan tombol "Tambah".
 4. **Desain Glassmorphism Premium**: Background blur, gradien bercahaya, dan mesh background berpendar.
 5. **Mode Gelap/Terang**: Toggle tema yang tersimpan di `localStorage` dan mengikuti preferensi sistem.
@@ -109,7 +109,7 @@ superfood_webform/
 | Variabel | Keterangan |
 |---|---|
 | `WEB_APP_URL` | URL deployment Google Apps Script Web App |
-| `BD_CONFIG_CSV_URL` | URL CSV publik Google Sheet "SF Tech" (gid=0) |
+| `BD_CONFIG_URL` | URL CSV publik Google Sheet konfigurasi BD (gid=565510790) |
 | `ENABLE_SHEET_SUBMISSION` | `true` untuk kirim ke Sheets, `false` untuk simulasi lokal |
 | `bdMap` | Fallback hardcode BD jika fetch CSV gagal |
 
@@ -125,16 +125,18 @@ superfood_webform/
 | F | Email Foodmaster *(khusus GoFood)* |
 | G | Username *(GrabFood: dari input / ShopeeFood: dari BD map)* |
 | H | Password *(GrabFood: `SuperFood@2026` / ShopeeFood: dari BD map)* |
+| I | Nama BD |
+| J | Nama Akses *(khusus GoFood)* |
 
-### Sumber Data BD (Google Sheet "SF Tech", gid=0)
+### Sumber Data BD (Google Sheet konfigurasi BD, gid=565510790)
 
 | Kolom Sheet | Data | Index Array (0-based) |
 |---|---|---|
-| T | Username BD | 19 |
-| U | Password BD | 20 |
-| X | Nama BD | 23 |
+| E | Username | 4 |
+| F | Password | 5 |
+| I | Nama BD | 8 |
 
-Data dibaca hanya dari **baris 8 sampai 11**.
+Data dibaca secara dinamis mulai dari **baris ke-7**.
 
 ---
 
@@ -161,12 +163,12 @@ Data dibaca hanya dari **baris 8 sampai 11**.
 5. Salin URL deployment dan tempel ke variabel `WEB_APP_URL` di `script.js`
 6. Lakukan re-deploy setiap kali ada perubahan kode di `AppsScript.gs`
 
-### Setup Google Sheet "SF Tech" (Sumber BD)
+### Setup Google Sheet (Sumber BD)
 
-1. Buka Google Sheet "SF Tech"
+1. Buka Google Sheet konfigurasi BD
 2. Klik **File** → **Share** → **Publish to the web**
-3. Pilih **Sheet pertama** (gid=0) → format **CSV**
-4. Salin URL yang dihasilkan ke variabel `BD_CONFIG_CSV_URL` di `script.js`
+3. Pilih sheet dengan gid **565510790** → format **CSV**
+4. Salin URL yang dihasilkan ke variabel `BD_CONFIG_URL` di `script.js`
 
 ---
 
@@ -174,7 +176,7 @@ Data dibaca hanya dari **baris 8 sampai 11**.
 
 | Masalah | Kemungkinan Penyebab | Solusi |
 |---|---|---|
-| Dropdown BD tidak update | Sheet belum di-publish / fetch gagal | Pastikan sheet sudah di-publish to web sebagai CSV, periksa `BD_CONFIG_CSV_URL` |
+| Dropdown BD tidak update | Sheet belum di-publish / fetch gagal | Pastikan sheet sudah di-publish to web sebagai CSV, periksa `BD_CONFIG_URL` |
 | Data tidak masuk ke sheet | Apps Script belum di-deploy ulang | Buat deployment baru (New Version) di GAS editor |
 | Sheet target tidak ditemukan | Nama sheet salah | Pastikan nama sheet tujuan adalah `Baseline` |
-| BD tidak sesuai di Shopee | Indeks kolom/baris salah | Verifikasi data di baris 8-11, kolom T, U, X di SF Tech sheet |
+| BD tidak sesuai di Shopee | Indeks kolom/baris salah | Verifikasi data di kolom E, F, I di Sheet BD |
