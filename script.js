@@ -90,8 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (Date.now() - parsedCache.timestamp < CACHE_TTL) {
             bdMap = parsedCache.bdMap;
             populateBdDropdown(parsedCache.bdNames);
-            console.log('[BD Cache] Menggunakan data cache.');
-            return;
+            console.log('[BD Cache] Menggunakan data cache, lanjut update di background...');
+            // Tidak menggunakan return di sini agar fetch tetap berjalan di background
+            // sehingga saat user refresh halaman, data selalu sinkron dengan yang terbaru
           }
         } catch(e) {
           console.warn('[BD Cache] Gagal membaca cache:', e);
