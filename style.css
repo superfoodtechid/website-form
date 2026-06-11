@@ -436,6 +436,39 @@ body {
   user-select: none;
 }
 
+/* === Inline Suffix (inside the field, right-aligned) === */
+.input-group.has-inline-suffix {
+  position: relative;
+}
+
+.input-group.has-inline-suffix input {
+  /* padding-right = suffix-width(~108px) + icon-area(44px) + safety(12px) = 164px */
+  padding-right: 164px;
+}
+
+.inline-suffix {
+  position: absolute;
+  right: 44px; /* just outside the 18px validation icon + 8px gap + 18px = ~44px */
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono); /* monospace = predictable char width */
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  opacity: 0.55;             /* extra dim so it feels like a ghost hint */
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+  transition: opacity var(--transition-fast);
+}
+
+/* Show suffix only when there's a value typed OR the field is focused */
+.input-group.has-inline-suffix input:focus ~ .inline-suffix,
+.input-group.has-inline-suffix input:not(:placeholder-shown) ~ .inline-suffix {
+  opacity: 0.55;
+}
+
 .input-group {
   position: relative;
   display: flex;

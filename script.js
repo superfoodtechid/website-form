@@ -408,28 +408,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
             </div>
-            <div class="input-group">
-              <input type="email" id="${emailDuckId}" class="gofood-email-duck-input" name="gofoodEmailDuck" required placeholder=" ">
-              <label for="${emailDuckId}">Email Duck</label>
+            <div class="input-group has-inline-suffix">
+              <input type="text" id="${emailDuckId}" class="gofood-email-duck-input" name="gofoodEmailDuck" required placeholder=" ">
+              <label for="${emailDuckId}">Email</label>
               <span class="focus-bar"></span>
-              <span class="error-msg">Email tidak valid</span>
+              <span class="inline-suffix">@byfoodmaster.com</span>
+              <span class="error-msg">Format tidak valid</span>
                             <div class="validation-icon">
                 <img class="valid" src="Logo/check.png" alt="Valid">
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
             </div>
-            <div class="input-group-with-suffix">
-              <div class="input-group">
-                <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" placeholder=" ">
-                <label for="${emailFoodmasterId}">Email</label>
-                <span class="focus-bar"></span>
-                <span class="error-msg">Format tidak valid</span>
-                                <div class="validation-icon">
-                  <img class="valid" src="Logo/check.png" alt="Valid">
-                  <img class="invalid" src="Logo/cross.png" alt="Invalid">
-                </div>
+            <div class="input-group has-inline-suffix">
+              <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" placeholder=" ">
+              <label for="${emailFoodmasterId}">Email</label>
+              <span class="focus-bar"></span>
+              <span class="inline-suffix">@byfoodmaster.com</span>
+              <span class="error-msg">Format tidak valid</span>
+                              <div class="validation-icon">
+                <img class="valid" src="Logo/check.png" alt="Valid">
+                <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
-              <span class="input-suffix">@byfoodmaster.com</span>
             </div>
           </div>
         </div>
@@ -647,10 +646,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Validasi format (hanya jika field diisi)
     if (value !== '') {
-      if (input.classList.contains('gofood-email-foodmaster-input')) {
+      if (input.classList.contains('gofood-email-foodmaster-input') || input.classList.contains('gofood-email-duck-input')) {
         if (/\s/.test(value) || /@/.test(value)) {
           isValid = false;
-          errorMessage = 'Format tidak valid';
+          errorMessage = 'Format tidak valid (tanpa @)';
         }
       } else if (input.type === 'email') {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -737,6 +736,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const namaAksesEl = row.querySelector('.gofood-nama-akses-input');
           const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
           const emailDuckVal = duckEl ? duckEl.value.trim() : '';
+          // Append domain jika user hanya ketik prefix
+          const emailDuckFull = (emailDuckVal && !emailDuckVal.includes('@'))
+            ? emailDuckVal + '@byfoodmaster.com'
+            : emailDuckVal;
           const namaAksesVal = namaAksesEl ? namaAksesEl.value.trim() : '';
           let emailFoodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
           if (emailFoodmasterVal === '@byfoodmaster.com') {
@@ -746,18 +749,18 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           // Skip jika semua field utama kosong
-          if (emailDuckVal === '' && namaAksesVal === '' && emailFoodmasterVal === '') {
+          if (emailDuckFull === '' && namaAksesVal === '' && emailFoodmasterVal === '') {
             return;
           }
 
-          credentialsPayload.gofood.push({ emailDuck: emailDuckVal, namaAkses: namaAksesVal, emailFoodmaster: emailFoodmasterVal });
+          credentialsPayload.gofood.push({ emailDuck: emailDuckFull, namaAkses: namaAksesVal, emailFoodmaster: emailFoodmasterVal });
 
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
             outlet: outletNameInput.value.trim(),
             bd: bdSelect.value,
             aplikator: 'GoFood',
-            emailDuck: emailDuckVal,
+            emailDuck: emailDuckFull,
             namaAkses: namaAksesVal,
             emailFoodmaster: emailFoodmasterVal
           });
