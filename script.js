@@ -408,22 +408,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
             </div>
-            <div class="input-group has-inline-suffix">
+            <div class="input-group">
               <input type="text" id="${emailDuckId}" class="gofood-email-duck-input" name="gofoodEmailDuck" required placeholder=" ">
-              <label for="${emailDuckId}">Email</label>
+              <label for="${emailDuckId}" style="color: #EF4444;">outlet1@byfoodmaster.com</label>
               <span class="focus-bar"></span>
-              <span class="inline-suffix">@byfoodmaster.com</span>
               <span class="error-msg">Format tidak valid</span>
                             <div class="validation-icon">
                 <img class="valid" src="Logo/check.png" alt="Valid">
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
             </div>
-            <div class="input-group has-inline-suffix">
+            <div class="input-group">
               <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" placeholder=" ">
-              <label for="${emailFoodmasterId}">Email</label>
+              <label for="${emailFoodmasterId}" style="color: #EF4444;">outlet2@byfoodmaster.com</label>
               <span class="focus-bar"></span>
-              <span class="inline-suffix">@byfoodmaster.com</span>
               <span class="error-msg">Format tidak valid</span>
                               <div class="validation-icon">
                 <img class="valid" src="Logo/check.png" alt="Valid">
