@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
             <div class="input-group">
-              <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" placeholder=" ">
+              <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" required placeholder=" ">
               <label for="${emailFoodmasterId}" style="color: #EF4444;">outlet2@byfoodmaster.com</label>
               <span class="focus-bar"></span>
               <span class="error-msg">Format tidak valid</span>
@@ -583,6 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
           const duckVal = duckEl ? duckEl.value.trim() : '';
           const namaAksesVal = namaAksesEl ? namaAksesEl.value.trim() : '';
+          const foodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
 
           if (duckVal === '') {
             allCredsValid = false;
@@ -590,14 +591,15 @@ document.addEventListener('DOMContentLoaded', () => {
           if (namaAksesVal === '') {
             allCredsValid = false;
           }
+          if (foodmasterVal === '') {
+            allCredsValid = false;
+          }
           if (duckEl && duckEl.closest('.input-group')?.classList.contains('is-invalid')) {
             allCredsValid = false;
           }
-          // namaAkses wajib — validasi juga jika ada error
           if (namaAksesEl && namaAksesEl.closest('.input-group')?.classList.contains('is-invalid')) {
             allCredsValid = false;
           }
-          // foodmasterVal opsional — hanya validasi format jika diisi
           if (foodmasterEl && foodmasterEl.closest('.input-group')?.classList.contains('is-invalid')) {
             allCredsValid = false;
           }
