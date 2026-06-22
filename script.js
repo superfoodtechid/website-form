@@ -962,11 +962,11 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="summary-platform">GoFood</div>`;
       data.kredensial.gofood.forEach((item, i) => {
         const label = data.kredensial.gofood.length > 1 ? ` ${i + 1}` : '';
-        html += `<div class="summary-row"><span class="summary-label">Email Foodmaster${label}</span><span class="summary-value">${item.emailDuck || '-'}</span></div>`;
         if (item.namaAkses) {
           html += `<div class="summary-row"><span class="summary-label">Nama Akses${label}</span><span class="summary-value">${item.namaAkses}</span></div>`;
         }
-        html += `<div class="summary-row"><span class="summary-label">Email Foodmaster${label}</span><span class="summary-value">${item.emailFoodmaster || '-'}</span></div>`;
+        html += `<div class="summary-row"><span class="summary-label">Email FoodMaster 1${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${item.emailDuck || '-'}</span></div>`;
+        html += `<div class="summary-row"><span class="summary-label">Email FoodMaster 2${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${item.emailFoodmaster || '-'}</span></div>`;
       });
       html += `<div class="summary-divider"></div>`;
     }
